@@ -1,0 +1,1904 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"/>
+<meta name="theme-color" content="#060608"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="description" content="SUDKINGS — La Conquête du Grand Sud"/>
+<title>SUDKINGS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Outfit:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+/* ═══════════════════════════════════════════════════
+   SUDKINGS — LUXURY WAR AESTHETIC
+   Single File PWA — Everything included
+═══════════════════════════════════════════════════ */
+
+:root {
+  --g1:#f5c842;--g2:#e8a020;--g3:#c47a10;--g4:#8a4d00;
+  --ink:#060608;--ink1:#0d0d10;--ink2:#141418;--ink3:#1c1c22;
+  --ink4:#252530;--ink5:#32323f;--ink6:#4a4a5a;
+  --text:#f0f0f5;--text2:#a0a0b0;--text3:#606070;
+  --red:#e84444;--green:#44e8a0;--blue:#4488e8;
+  --safe-t:env(safe-area-inset-top,0px);
+  --safe-b:env(safe-area-inset-bottom,0px);
+  --nav-h:72px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}
+html,body{height:100%;overflow:hidden;background:var(--ink);color:var(--text);font-family:'Outfit',sans-serif;overscroll-behavior:none}
+::-webkit-scrollbar{display:none}
+
+/* ── NOISE OVERLAY ── */
+body::before{
+  content:'';position:fixed;inset:0;z-index:9999;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity:.6;mix-blend-mode:overlay;
+}
+
+/* ── TYPOGRAPHY ── */
+.font-display{font-family:'Cormorant Garamond',serif}
+.font-mono{font-family:'JetBrains Mono',monospace}
+
+.gold{
+  background:linear-gradient(135deg,#f5c842 0%,#e8a020 30%,#fce060 60%,#c47a10 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.gold-solid{color:#f5c842}
+
+/* ═══ SPLASH ═══════════════════════════════════════ */
+#splash{
+  position:fixed;inset:0;z-index:1000;background:var(--ink);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;
+  transition:opacity .6s ease, transform .6s ease;
+}
+#splash.out{opacity:0;transform:scale(1.06);pointer-events:none}
+
+.splash-gem{
+  font-size:64px;
+  animation:splashGem 2s ease-in-out infinite;
+  filter:drop-shadow(0 0 20px rgba(245,200,66,.5));
+}
+@keyframes splashGem{
+  0%,100%{transform:scale(1) rotate(-5deg);filter:drop-shadow(0 0 20px rgba(245,200,66,.5))}
+  50%{transform:scale(1.1) rotate(5deg);filter:drop-shadow(0 0 40px rgba(245,200,66,.9))}
+}
+.splash-title{font-family:'Cormorant Garamond',serif;font-size:52px;font-weight:700;letter-spacing:-.02em}
+.splash-sub{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.4em;text-transform:uppercase;color:var(--text3)}
+.splash-bar{width:120px;height:2px;background:var(--ink4);border-radius:2px;margin-top:8px;overflow:hidden}
+.splash-bar-fill{height:100%;width:0;background:linear-gradient(90deg,var(--g3),var(--g1));border-radius:2px;animation:splashLoad 1.8s ease forwards}
+@keyframes splashLoad{to{width:100%}}
+
+/* ═══ AUTH ══════════════════════════════════════════ */
+#auth{
+  position:fixed;inset:0;z-index:100;
+  background:radial-gradient(ellipse 100% 80% at 50% -5%,rgba(245,200,66,.07) 0%,transparent 60%),var(--ink);
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+  overflow-y:auto;padding:calc(var(--safe-t) + 48px) 24px calc(var(--safe-b) + 48px);
+  transition:opacity .4s ease,transform .4s ease;
+}
+#auth.out{opacity:0;transform:translateY(-16px);pointer-events:none}
+
+.auth-logo{text-align:center;margin-bottom:32px}
+.auth-logo-title{font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:700;line-height:1}
+.auth-logo-diamond{
+  font-size:20px;display:inline-block;margin:0 6px;
+  animation:diamondSpin 4s linear infinite;
+  filter:drop-shadow(0 0 6px var(--g1));
+}
+@keyframes diamondSpin{0%,100%{transform:rotate(-10deg) scale(1)}50%{transform:rotate(10deg) scale(1.15)}}
+.auth-logo-sub{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.5em;text-transform:uppercase;color:var(--text3);margin-top:6px}
+
+.auth-card{
+  width:100%;max-width:380px;
+  background:var(--ink1);
+  border:1px solid rgba(245,200,66,.1);
+  border-radius:24px;
+  padding:28px 24px;
+  box-shadow:0 0 0 1px rgba(255,255,255,.02),0 32px 80px rgba(0,0,0,.8),0 0 60px rgba(245,200,66,.04);
+}
+
+.tab-row{display:flex;background:var(--ink2);border-radius:14px;padding:4px;margin-bottom:24px;gap:4px}
+.tab-btn{
+  flex:1;padding:10px;border:none;border-radius:10px;
+  font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;
+  color:var(--text3);background:transparent;cursor:pointer;transition:all .2s;
+}
+.tab-btn.on{
+  background:linear-gradient(135deg,var(--g4),var(--g3),var(--g2));
+  color:#fff;box-shadow:0 4px 16px rgba(196,122,16,.3);
+}
+
+.field{margin-bottom:16px}
+.field label{
+  display:block;font-family:'JetBrains Mono',monospace;
+  font-size:9px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--text3);margin-bottom:8px;
+}
+.field input,.field textarea{
+  width:100%;background:var(--ink2);border:1px solid var(--ink4);
+  border-radius:12px;padding:13px 16px;color:var(--text);
+  font-family:'Outfit',sans-serif;font-size:15px;outline:none;
+  transition:border-color .2s,box-shadow .2s;resize:none;
+}
+.field input:focus,.field textarea:focus{
+  border-color:rgba(245,200,66,.4);
+  box-shadow:0 0 0 3px rgba(245,200,66,.07);
+}
+.field input::placeholder,.field textarea::placeholder{color:var(--ink6)}
+.pwd-wrap{position:relative}
+.pwd-wrap input{padding-right:48px}
+.pwd-eye{
+  position:absolute;right:14px;top:50%;transform:translateY(-50%);
+  background:none;border:none;font-size:16px;cursor:pointer;opacity:.5;transition:opacity .2s;
+}
+.pwd-eye:hover{opacity:1}
+
+.btn-gold{
+  width:100%;padding:15px;border:none;border-radius:14px;
+  background:linear-gradient(135deg,var(--g4) 0%,var(--g3) 40%,var(--g2) 70%,var(--g1) 100%);
+  background-size:200% 200%;
+  animation:btnShimmer 3s ease infinite;
+  color:#000;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;cursor:pointer;
+  box-shadow:0 6px 24px rgba(196,122,16,.35),0 0 0 1px rgba(245,200,66,.15);
+  transition:transform .15s,box-shadow .15s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.btn-gold:active{transform:scale(.97);box-shadow:0 3px 12px rgba(196,122,16,.25)}
+@keyframes btnShimmer{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+.btn-ghost{
+  width:100%;padding:13px;border:1px solid var(--ink4);border-radius:14px;
+  background:transparent;color:var(--text3);font-family:'Outfit',sans-serif;
+  font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;margin-top:8px;
+}
+.btn-ghost:hover{border-color:var(--ink5);color:var(--text2)}
+
+.referral-hint{
+  text-align:center;margin-top:6px;
+  font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--g2);
+}
+
+/* ═══ APP ═══════════════════════════════════════════ */
+#app{
+  position:fixed;inset:0;display:flex;flex-direction:column;
+  opacity:0;pointer-events:none;transition:opacity .5s ease;
+}
+#app.on{opacity:1;pointer-events:all}
+
+/* ── TOP BAR ── */
+#topbar{
+  flex-shrink:0;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:calc(var(--safe-t) + 10px) 16px 10px;
+  background:linear-gradient(180deg,rgba(6,6,8,.98) 0%,rgba(6,6,8,.7) 100%);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-bottom:1px solid rgba(245,200,66,.06);
+  z-index:50;position:relative;
+}
+.topbar-logo{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;letter-spacing:.02em}
+.topbar-right{display:flex;align-items:center;gap:8px}
+
+.streak-pill{
+  display:flex;align-items:center;gap:4px;
+  background:rgba(255,100,0,.08);border:1px solid rgba(255,100,0,.15);
+  border-radius:100px;padding:5px 10px;
+  font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#ff8040;
+}
+
+#gemPill{
+  display:flex;align-items:center;gap:6px;
+  background:linear-gradient(135deg,rgba(139,77,0,.2),rgba(245,200,66,.08));
+  border:1px solid rgba(245,200,66,.2);border-radius:100px;
+  padding:5px 12px 5px 8px;cursor:pointer;
+  transition:all .2s;position:relative;overflow:hidden;
+}
+#gemPill::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(245,200,66,.06),transparent);
+  transform:translateX(-100%);animation:pillShimmer 3s ease infinite;
+}
+@keyframes pillShimmer{0%{transform:translateX(-100%)}100%{transform:translateX(200%)}}
+.gem-icon{font-size:16px;animation:gemFloat 2.5s ease-in-out infinite;filter:drop-shadow(0 0 5px rgba(245,200,66,.6))}
+@keyframes gemFloat{0%,100%{transform:scale(1) rotate(-5deg)}50%{transform:scale(1.15) rotate(5deg);filter:drop-shadow(0 0 10px rgba(245,200,66,.9))}}
+#gemCount{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--g1)}
+
+/* ── PAGES ── */
+#pages{flex:1;position:relative;overflow:hidden}
+.page{
+  position:absolute;inset:0;
+  transition:opacity .3s ease,transform .3s ease;
+  overflow-y:auto;overflow-x:hidden;
+  padding-bottom:calc(var(--nav-h) + var(--safe-b) + 8px);
+}
+.page.hide{opacity:0;pointer-events:none;transform:translateY(12px)}
+
+/* ── BOTTOM NAV ── */
+#nav{
+  flex-shrink:0;height:calc(var(--nav-h) + var(--safe-b));
+  display:flex;align-items:flex-start;justify-content:space-around;
+  padding:8px 4px 0;padding-bottom:calc(8px + var(--safe-b));
+  background:rgba(6,6,8,.92);backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);
+  border-top:1px solid rgba(245,200,66,.06);z-index:50;
+}
+.nav-item{
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+  background:none;border:none;cursor:pointer;padding:6px 2px;
+  transition:transform .2s;
+}
+.nav-item:active{transform:scale(.93)}
+.nav-icon{font-size:20px;line-height:1;transition:filter .25s,transform .25s}
+.nav-lbl{
+  font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--text3);transition:color .25s;
+}
+.nav-item.on .nav-icon{transform:scale(1.15);filter:drop-shadow(0 0 8px var(--g1))}
+.nav-item.on .nav-lbl{color:var(--g1)}
+
+/* center post button */
+.nav-item.nav-post{flex:0 0 68px}
+.nav-post-inner{
+  width:52px;height:52px;border-radius:16px;margin-top:-12px;
+  background:linear-gradient(135deg,var(--g4),var(--g2),var(--g1));
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;
+  box-shadow:0 6px 24px rgba(196,122,16,.4),0 0 0 1px rgba(245,200,66,.2),
+             0 2px 0 0 rgba(245,200,66,.3) inset;
+  transition:transform .2s,box-shadow .2s;
+}
+.nav-item.nav-post:active .nav-post-inner{transform:scale(.92);box-shadow:0 3px 12px rgba(196,122,16,.3)}
+.nav-item.nav-post.on .nav-post-inner{box-shadow:0 6px 32px rgba(245,200,66,.5),0 0 0 2px var(--g1)}
+
+/* ═══ PAGE: HOME (WALL) ════════════════════════════ */
+#wallFeed{display:flex;flex-direction:column;gap:2px}
+
+.post-card{
+  position:relative;width:100%;aspect-ratio:4/5;background:var(--ink2);
+  overflow:hidden;cursor:pointer;
+  scroll-snap-align:start;
+}
+.post-card img{
+  width:100%;height:100%;object-fit:cover;
+  transition:transform .5s cubic-bezier(.25,.46,.45,.94);display:block;
+}
+.post-card:active img{transform:scale(1.03)}
+
+.post-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to bottom,transparent 35%,rgba(6,6,8,.2) 55%,rgba(6,6,8,.92) 100%);
+}
+.post-meta{
+  position:absolute;bottom:0;left:0;right:0;padding:16px 16px 14px;
+  display:flex;align-items:flex-end;justify-content:space-between;gap:12px;
+}
+.post-meta-left{flex:1;min-width:0}
+.post-pseudo{
+  font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  text-shadow:0 1px 8px rgba(0,0,0,.6);
+}
+.post-city{
+  font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.2em;
+  text-transform:uppercase;color:rgba(245,200,66,.7);margin-top:2px;
+}
+.post-caption{
+  font-size:12px;color:rgba(255,255,255,.6);margin-top:4px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.post-vote-badge{
+  flex-shrink:0;display:flex;align-items:center;gap:5px;
+  background:rgba(6,6,8,.7);backdrop-filter:blur(12px);
+  border:1px solid rgba(245,200,66,.15);border-radius:100px;
+  padding:6px 12px;
+  font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--g1);
+}
+
+/* vote tap ripple */
+.post-card .ripple{
+  position:absolute;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,rgba(245,200,66,.5) 0%,transparent 70%);
+  animation:rippleOut .6s ease forwards;
+}
+@keyframes rippleOut{from{opacity:1;transform:scale(0)}to{opacity:0;transform:scale(4)}}
+
+/* feed loader */
+.feed-loader{display:flex;justify-content:center;padding:24px}
+.ring{
+  width:32px;height:32px;border-radius:50%;
+  border:2px solid var(--ink4);border-top-color:var(--g2);
+  animation:spin .8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ═══ PAGE: LEADERBOARD ═══════════════════════════ */
+.lb-header{
+  padding:20px 16px 12px;text-align:center;
+  position:relative;
+}
+.lb-title{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:700;letter-spacing:.02em}
+.lb-sub{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.4em;text-transform:uppercase;color:var(--text3);margin-top:4px}
+
+.lb-list{padding:0 12px 8px;display:flex;flex-direction:column;gap:10px}
+
+.lb-card{
+  display:flex;align-items:center;gap:12px;
+  background:var(--ink1);border:1px solid var(--ink3);
+  border-radius:18px;padding:14px 14px;
+  transition:all .2s;cursor:pointer;
+  position:relative;overflow:hidden;
+}
+.lb-card::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--ink4);border-radius:0 3px 3px 0;
+}
+.lb-card:active{transform:scale(.98)}
+
+.lb-card.r1{
+  background:linear-gradient(145deg,#120f00,#0d0a00);
+  border-color:rgba(245,200,66,.3);
+  box-shadow:0 4px 24px rgba(245,200,66,.1),inset 0 1px 0 rgba(245,200,66,.08);
+}
+.lb-card.r1::before{background:linear-gradient(180deg,var(--g1),var(--g3))}
+.lb-card.r2::before{background:linear-gradient(180deg,#c0c0c8,#808090)}
+.lb-card.r3::before{background:linear-gradient(180deg,#cd8040,#8a5020)}
+
+.lb-rank{
+  font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;
+  color:var(--text3);min-width:22px;text-align:center;
+}
+.lb-card.r1 .lb-rank{color:var(--g1)}
+.lb-card.r2 .lb-rank{color:#c0c0c8}
+.lb-card.r3 .lb-rank{color:#cd8040}
+
+.lb-avatar{
+  width:46px;height:46px;border-radius:14px;
+  background:var(--ink3);display:flex;align-items:center;justify-content:center;
+  font-size:22px;flex-shrink:0;
+}
+.lb-card.r1 .lb-avatar{
+  border:1.5px solid rgba(245,200,66,.4);
+  box-shadow:0 0 16px rgba(245,200,66,.15);
+}
+
+.lb-info{flex:1;min-width:0}
+.lb-pseudo{
+  font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:700;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.lb-card.r1 .lb-pseudo{color:var(--g1)}
+.lb-stats{
+  font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--text3);margin-top:3px;
+}
+.founder-badge-sm{
+  font-size:8px;letter-spacing:.08em;text-transform:uppercase;
+  background:linear-gradient(135deg,var(--g4),var(--g2));
+  color:#000;padding:2px 6px;border-radius:100px;font-weight:700;margin-left:6px;
+}
+
+.lb-gems{
+  font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;
+  color:var(--g1);display:flex;align-items:center;gap:4px;
+}
+.lb-crown{
+  font-size:22px;position:absolute;top:-6px;right:12px;
+  animation:crownFloat 2s ease-in-out infinite;
+  filter:drop-shadow(0 0 10px rgba(245,200,66,.7));
+}
+@keyframes crownFloat{0%,100%{transform:rotate(-8deg) translateY(0)}50%{transform:rotate(8deg) translateY(-4px)}}
+
+/* ═══ PAGE: POSTER ════════════════════════════════ */
+.poster-wrap{padding:16px 16px 8px;display:flex;flex-direction:column;gap:14px}
+.poster-title{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:700;text-align:center}
+.poster-sub{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.4em;text-transform:uppercase;color:var(--text3);text-align:center;margin-top:2px}
+
+/* GPS card */
+#gpsCard{
+  border-radius:18px;padding:16px;text-align:center;
+  background:var(--ink1);border:1px solid var(--ink3);
+  transition:all .4s cubic-bezier(.25,.46,.45,.94);
+}
+#gpsCard.locked{background:linear-gradient(135deg,#130000,#0d0000);border-color:rgba(232,68,68,.25)}
+#gpsCard.unlocked{background:linear-gradient(135deg,#0d0800,#100d00);border-color:rgba(245,200,66,.3);box-shadow:0 4px 24px rgba(245,200,66,.08)}
+.gps-icon{font-size:28px;margin-bottom:6px;display:block}
+.gps-main{font-size:13px;font-weight:600;color:var(--text2)}
+.gps-detail{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--text3);margin-top:4px}
+.gps-locked-detail{color:rgba(232,68,68,.7)}
+.gps-unlocked-detail{color:rgba(245,200,66,.6)}
+
+/* image zone */
+#imgPreviewWrap{display:none;position:relative;border-radius:18px;overflow:hidden;aspect-ratio:4/5;background:var(--ink2)}
+#imgPreview{width:100%;height:100%;object-fit:cover}
+.img-clear{
+  position:absolute;top:10px;right:10px;
+  background:rgba(6,6,8,.8);backdrop-filter:blur(8px);
+  border:none;border-radius:50%;width:32px;height:32px;
+  font-size:14px;color:var(--text2);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+.img-badge{
+  position:absolute;bottom:10px;left:10px;
+  background:rgba(6,6,8,.75);backdrop-filter:blur(8px);
+  border-radius:100px;padding:4px 10px;
+  font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--g1);
+}
+
+#uploadZone{
+  border:1.5px dashed var(--ink4);border-radius:18px;
+  background:var(--ink1);position:relative;overflow:hidden;
+  transition:border-color .2s;
+}
+#uploadZone:hover,#uploadZone:has(input:focus){border-color:rgba(245,200,66,.3)}
+#uploadZone input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.upload-inner{padding:36px 16px;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none}
+.upload-icon{font-size:36px;filter:drop-shadow(0 0 8px rgba(245,200,66,.3))}
+.upload-txt{font-size:13px;color:var(--text3)}
+.upload-sub{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ink6);letter-spacing:.1em}
+
+/* caption */
+.caption-wrap{position:relative}
+.caption-count{
+  position:absolute;bottom:8px;right:12px;
+  font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);
+}
+
+/* post btn */
+#postBtnLocked{
+  border:1px solid rgba(232,68,68,.25);border-radius:18px;
+  background:linear-gradient(135deg,#130000,#0d0000);
+  padding:18px 16px;display:flex;align-items:center;gap:12px;cursor:not-allowed;
+}
+.lock-anim{font-size:24px;animation:lockPulse 1.4s ease-in-out infinite}
+@keyframes lockPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.12)}}
+.lock-txt{flex:1}
+.lock-txt-main{font-size:13px;font-weight:600;color:var(--red)}
+.lock-txt-sub{font-size:11px;color:rgba(232,68,68,.5);margin-top:2px}
+
+#postBtnFree{display:none}
+
+/* ═══ PAGE: PROFIL ════════════════════════════════ */
+.profil-wrap{padding:20px 16px 8px;display:flex;flex-direction:column;gap:14px}
+
+/* avatar */
+.profil-hero{display:flex;flex-direction:column;align-items:center;gap:10px}
+.avatar-ring{
+  padding:3px;border-radius:50%;background:var(--ink3);
+  display:inline-block;
+}
+.avatar-ring.founder{
+  background:conic-gradient(var(--g1) 0deg,var(--g3) 60deg,var(--g4) 120deg,var(--g1) 180deg,var(--g2) 240deg,var(--g1) 300deg,var(--g1) 360deg);
+  animation:ringRotate 3s linear infinite;
+}
+@keyframes ringRotate{to{transform:rotate(360deg)}}
+.avatar-inner{
+  width:80px;height:80px;border-radius:50%;
+  background:var(--ink2);display:flex;align-items:center;justify-content:center;
+  font-size:36px;overflow:hidden;
+}
+.profil-pseudo{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700}
+.profil-email{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3)}
+.profil-ref-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:center}
+.profil-ref-lbl{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3)}
+.profil-ref-code{
+  font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--g1);
+  background:rgba(245,200,66,.08);border:1px solid rgba(245,200,66,.2);
+  padding:3px 10px;border-radius:100px;cursor:pointer;transition:all .2s;
+}
+.profil-ref-code:active{background:rgba(245,200,66,.15);transform:scale(.97)}
+
+/* stats */
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat-box{
+  background:var(--ink1);border:1px solid var(--ink3);border-radius:16px;
+  padding:14px 10px;text-align:center;
+}
+.stat-val{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;line-height:1}
+.stat-lbl{font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--text3);letter-spacing:.08em;margin-top:4px;text-transform:uppercase}
+
+/* lucky */
+#luckyBox{display:none}
+.lucky-card{
+  border-radius:18px;padding:18px;text-align:center;
+  background:linear-gradient(135deg,#0a0800,#141000);
+  border:1px solid rgba(245,200,66,.35);
+  box-shadow:0 4px 32px rgba(245,200,66,.12),inset 0 0 24px rgba(245,200,66,.04);
+  animation:luckPulse 2s ease-in-out infinite;
+}
+@keyframes luckPulse{0%,100%{box-shadow:0 4px 32px rgba(245,200,66,.12)}50%{box-shadow:0 4px 48px rgba(245,200,66,.22)}}
+.lucky-icon{font-size:32px;margin-bottom:6px;filter:drop-shadow(0 0 12px var(--g1))}
+.lucky-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:var(--g1)}
+.lucky-desc{font-size:12px;color:rgba(245,200,66,.6);margin-top:4px}
+
+/* ad watch */
+#adBox{display:none}
+.ad-card{
+  background:linear-gradient(145deg,#0e0e00,#0a0a00);
+  border:1px solid rgba(245,200,66,.15);border-radius:18px;padding:18px;
+}
+.ad-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.ad-icon{font-size:24px}
+.ad-title{font-size:13px;font-weight:700}
+.ad-desc{font-size:11px;color:var(--text3);margin-top:2px}
+#adProgressWrap{display:none;margin-top:12px}
+.ad-progress-row{display:flex;justify-content:space-between;margin-bottom:6px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3)}
+.ad-track{height:4px;background:var(--ink3);border-radius:100px;overflow:hidden}
+#adBar{height:100%;width:0;background:linear-gradient(90deg,var(--g3),var(--g1));border-radius:100px;transition:width 1s linear}
+
+/* my posts mini grid */
+.myposts-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;border-radius:12px;overflow:hidden}
+.mpost-thumb{
+  aspect-ratio:1;background:var(--ink2);position:relative;overflow:hidden;cursor:pointer;
+}
+.mpost-thumb img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
+.mpost-thumb:active img{transform:scale(1.05)}
+.mpost-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(6,6,8,.75) 0%,transparent 50%);
+  display:flex;align-items:flex-end;padding:5px;
+  font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--g1);
+}
+
+/* ═══ PAGE: GUIDE ═════════════════════════════════ */
+.guide-wrap{padding:20px 16px 8px;display:flex;flex-direction:column;gap:12px}
+.guide-title-h{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:700;text-align:center}
+.guide-sub-h{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.4em;text-transform:uppercase;color:var(--text3);text-align:center;margin-top:4px;margin-bottom:8px}
+
+.guide-card{
+  background:var(--ink1);border:1px solid var(--ink3);border-radius:18px;
+  padding:18px;display:flex;flex-direction:column;gap:8px;
+}
+.guide-card.gold-card{
+  background:linear-gradient(145deg,#100d00,#0d0900);
+  border-color:rgba(245,200,66,.25);
+}
+.gc-icon{font-size:26px;filter:drop-shadow(0 0 6px rgba(245,200,66,.3))}
+.gc-title{
+  font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--g2);
+}
+.gc-body{font-size:13px;color:var(--text2);line-height:1.65}
+.gc-body strong{color:var(--g1)}
+
+/* ═══ POST MODAL ══════════════════════════════════ */
+#postModal{
+  position:fixed;inset:0;z-index:500;
+  background:rgba(6,6,8,.95);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  display:flex;flex-direction:column;
+  opacity:0;pointer-events:none;
+  transition:opacity .3s ease,transform .3s ease;
+  transform:translateY(16px);
+}
+#postModal.on{opacity:1;pointer-events:all;transform:translateY(0)}
+
+.modal-top{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:calc(var(--safe-t) + 12px) 16px 12px;
+  border-bottom:1px solid var(--ink3);
+}
+.modal-back{background:none;border:none;font-size:22px;color:var(--text2);cursor:pointer;padding:4px;line-height:1}
+.modal-user{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700}
+.modal-placeholder{width:30px}
+
+.modal-img-wrap{width:100%;aspect-ratio:4/5;background:var(--ink2);position:relative;flex-shrink:0}
+.modal-img-wrap img{width:100%;height:100%;object-fit:cover}
+.modal-vote-badge{
+  position:absolute;top:12px;right:12px;
+  background:rgba(6,6,8,.75);backdrop-filter:blur(12px);
+  border:1px solid rgba(245,200,66,.2);border-radius:100px;
+  padding:6px 12px;display:flex;align-items:center;gap:5px;
+  font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--g1);
+}
+
+.modal-body{flex:1;overflow-y:auto;padding:16px}
+.modal-caption{font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:10px}
+.modal-meta{display:flex;gap:12px;margin-bottom:14px}
+.modal-city{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--g2)}
+.modal-date{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3)}
+
+.btn-vote{
+  width:100%;padding:16px;border:1px solid rgba(245,200,66,.2);border-radius:16px;
+  background:linear-gradient(135deg,rgba(139,77,0,.12),rgba(245,200,66,.05));
+  color:var(--g1);font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;
+  transition:all .2s;
+}
+.btn-vote:active{background:linear-gradient(135deg,rgba(139,77,0,.22),rgba(245,200,66,.1));transform:scale(.98)}
+.btn-vote:disabled{opacity:.35;cursor:not-allowed}
+
+/* ═══ LUCKY AURA ══════════════════════════════════ */
+#luckyAura{
+  display:none;position:fixed;inset:0;z-index:2;pointer-events:none;
+}
+#luckyAura.on{display:block}
+.aura-ring{
+  position:absolute;inset:0;
+  border:2.5px solid transparent;
+  background:
+    linear-gradient(var(--ink),var(--ink)) padding-box,
+    conic-gradient(var(--g1) 0deg,var(--g3) 60deg,var(--g4) 120deg,var(--g1) 180deg,var(--g2) 240deg,var(--g1) 300deg,var(--g1) 360deg) border-box;
+  animation:auraRotate 4s linear infinite;
+  border-radius:0;
+}
+@keyframes auraRotate{to{filter:hue-rotate(20deg)}}
+.aura-glow{
+  position:absolute;inset:0;
+  box-shadow:inset 0 0 60px rgba(245,200,66,.08),inset 0 0 120px rgba(245,200,66,.04);
+}
+
+/* ═══ EXPLOSION CANVAS ════════════════════════════ */
+#boom{position:fixed;inset:0;z-index:9000;pointer-events:none;display:none;mix-blend-mode:screen}
+
+/* ═══ TOASTS ══════════════════════════════════════ */
+#toasts{
+  position:fixed;top:calc(var(--safe-t) + 60px);left:0;right:0;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  z-index:9997;pointer-events:none;
+}
+.toast{
+  display:flex;align-items:center;gap:8px;
+  background:var(--ink1);border:1px solid var(--ink4);border-radius:100px;
+  padding:10px 18px;box-shadow:0 8px 28px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.03);
+  font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.03em;
+  max-width:88vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  animation:toastIn .4s cubic-bezier(.34,1.56,.64,1);
+}
+.toast.t-success{border-color:rgba(68,232,160,.25);box-shadow:0 8px 28px rgba(0,0,0,.7),0 0 14px rgba(68,232,160,.08)}
+.toast.t-error{border-color:rgba(232,68,68,.25);box-shadow:0 8px 28px rgba(0,0,0,.7),0 0 14px rgba(232,68,68,.08)}
+.toast.t-gold{border-color:rgba(245,200,66,.3);box-shadow:0 8px 28px rgba(0,0,0,.7),0 0 16px rgba(245,200,66,.12)}
+.toast.out{animation:toastOut .3s ease forwards}
+@keyframes toastIn{from{opacity:0;transform:translateY(-14px) scale(.85)}to{opacity:1;transform:none}}
+@keyframes toastOut{from{opacity:1;transform:none}to{opacity:0;transform:translateY(-8px) scale(.9)}}
+
+/* ═══ EMPTY STATES ════════════════════════════════ */
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 24px;gap:12px;text-align:center}
+.empty-icon{font-size:48px;filter:drop-shadow(0 0 10px rgba(245,200,66,.25))}
+.empty-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:var(--text2)}
+.empty-desc{font-size:12px;color:var(--text3);line-height:1.6}
+
+/* ═══ SECTION HEADERS ═════════════════════════════ */
+.section-h{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;color:var(--text2);margin-bottom:10px}
+
+/* ═══ UTILITIES ═══════════════════════════════════ */
+.hide{display:none!important}
+.flex-center{display:flex;align-items:center;justify-content:center}
+.w-full{width:100%}
+</style>
+</head>
+<body>
+
+<!-- ╔═══════════════════════╗ -->
+<!-- ║       SPLASH          ║ -->
+<!-- ╚═══════════════════════╝ -->
+<div id="splash">
+  <div class="splash-gem">💎</div>
+  <div class="splash-title gold">SUDKINGS</div>
+  <div class="splash-sub">La Conquête du Grand Sud</div>
+  <div class="splash-bar"><div class="splash-bar-fill"></div></div>
+</div>
+
+<!-- ╔═══════════════════════╗ -->
+<!-- ║       AUTH            ║ -->
+<!-- ╚═══════════════════════╝ -->
+<div id="auth" class="hide">
+  <div class="auth-logo">
+    <div class="auth-logo-title gold">SUD<span class="auth-logo-diamond">💎</span>KINGS</div>
+    <div class="auth-logo-sub">Territoire · Pouvoir · Gemmes</div>
+  </div>
+
+  <div class="auth-card">
+    <div class="tab-row">
+      <button class="tab-btn on" id="tabLogin" onclick="switchAuthTab('login')">Connexion</button>
+      <button class="tab-btn" id="tabReg" onclick="switchAuthTab('register')">Inscription</button>
+    </div>
+
+    <!-- LOGIN -->
+    <div id="fLogin">
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="lEmail" placeholder="ton@email.com" autocomplete="email"/>
+      </div>
+      <div class="field">
+        <label>Mot de passe</label>
+        <div class="pwd-wrap">
+          <input type="password" id="lPwd" placeholder="••••••••" autocomplete="current-password"/>
+          <button class="pwd-eye" onclick="togglePwd('lPwd',this)">👁</button>
+        </div>
+      </div>
+      <button class="btn-gold" id="loginBtn" onclick="doLogin()">
+        <span>⚡</span><span>Entrer dans le Sud</span>
+      </button>
+    </div>
+
+    <!-- REGISTER -->
+    <div id="fReg" class="hide">
+      <div class="field">
+        <label>Pseudo unique</label>
+        <input type="text" id="rPseudo" placeholder="TonNom" maxlength="20" autocomplete="username"/>
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="rEmail" placeholder="ton@email.com" autocomplete="email"/>
+      </div>
+      <div class="field">
+        <label>Mot de passe</label>
+        <div class="pwd-wrap">
+          <input type="password" id="rPwd" placeholder="••••••••" autocomplete="new-password"/>
+          <button class="pwd-eye" onclick="togglePwd('rPwd',this)">👁</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>Code Parrain <span style="color:var(--g2);font-size:8px">(optionnel • +15 gemmes)</span></label>
+        <input type="text" id="rRef" placeholder="CODE_PARRAIN" maxlength="20" style="text-transform:uppercase"/>
+      </div>
+      <button class="btn-gold" id="regBtn" onclick="doRegister()">
+        <span>👑</span><span>Rejoindre l'Élite</span>
+      </button>
+      <div class="referral-hint">💎 15 gemmes offertes à l'inscription via parrainage</div>
+    </div>
+  </div>
+</div>
+
+<!-- ╔═══════════════════════╗ -->
+<!-- ║       MAIN APP        ║ -->
+<!-- ╚═══════════════════════╝ -->
+<div id="app">
+
+  <!-- LUCKY AURA -->
+  <div id="luckyAura"><div class="aura-ring"></div><div class="aura-glow"></div></div>
+
+  <!-- GOLD EXPLOSION -->
+  <canvas id="boom"></canvas>
+
+  <!-- TOASTS -->
+  <div id="toasts"></div>
+
+  <!-- TOP BAR -->
+  <div id="topbar">
+    <div class="topbar-logo gold">SUDKINGS</div>
+    <div class="topbar-right">
+      <div class="streak-pill" id="streakPill">
+        <span>🔥</span><span id="streakNum">0</span>
+      </div>
+      <div id="gemPill" onclick="goPage('profil')">
+        <span class="gem-icon">💎</span>
+        <span id="gemCount">0</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGES -->
+  <div id="pages">
+
+    <!-- HOME -->
+    <div class="page" id="pHome">
+      <div id="wallFeed"></div>
+      <div class="feed-loader" id="feedSpinner"><div class="ring"></div></div>
+      <div class="empty hide" id="feedEmpty">
+        <div class="empty-icon">💎</div>
+        <div class="empty-title">Le mur est vide</div>
+        <div class="empty-desc">Sois le premier à libérer un spot dans le Grand Sud.</div>
+      </div>
+    </div>
+
+    <!-- LEADERBOARD -->
+    <div class="page hide" id="pLeader">
+      <div class="lb-header">
+        <div class="lb-title gold">Rois du Sud</div>
+        <div class="lb-sub">Les plus puissants du territoire</div>
+      </div>
+      <div class="lb-list" id="lbList">
+        <div class="feed-loader"><div class="ring"></div></div>
+      </div>
+    </div>
+
+    <!-- POSTER -->
+    <div class="page hide" id="pPoster">
+      <div class="poster-wrap">
+        <div>
+          <div class="poster-title gold">Libérer le Spot</div>
+          <div class="poster-sub">Marque ton territoire</div>
+        </div>
+
+        <!-- GPS -->
+        <div id="gpsCard">
+          <span class="gps-icon">📡</span>
+          <div class="gps-main">Localisation en cours…</div>
+          <div class="gps-detail" id="gpsDetail">Autorise l'accès à ta position</div>
+        </div>
+
+        <!-- Image preview -->
+        <div id="imgPreviewWrap">
+          <img id="imgPreview" src="" alt=""/>
+          <button class="img-clear" onclick="clearImg()">✕</button>
+          <div class="img-badge">1080 × 1350 ✓</div>
+        </div>
+
+        <!-- Upload zone -->
+        <div id="uploadZone">
+          <input type="file" id="fileInput" accept="image/*" capture="environment" onchange="onFileSelect(event)"/>
+          <div class="upload-inner">
+            <div class="upload-icon">📸</div>
+            <div class="upload-txt">Touche pour ouvrir la caméra</div>
+            <div class="upload-sub">ou sélectionner une photo</div>
+          </div>
+        </div>
+
+        <!-- Caption -->
+        <div class="field caption-wrap">
+          <label>Légende</label>
+          <textarea id="caption" class="w-full" rows="3" placeholder="Décris ton spot… 🔥" maxlength="200" oninput="document.getElementById('capCount').textContent=this.value.length+'/200'"></textarea>
+          <div class="caption-count" id="capCount">0/200</div>
+        </div>
+
+        <!-- Post buttons -->
+        <div id="postBtnLocked">
+          <div class="lock-anim">🔒</div>
+          <div class="lock-txt">
+            <div class="lock-txt-main">Zone Verrouillée</div>
+            <div class="lock-txt-sub">Le Sud appartient à ceux qui y sont.</div>
+          </div>
+        </div>
+        <button class="btn-gold" id="postBtnFree" onclick="doPost()">
+          <span>⚡</span><span>Libérer le Spot</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- PROFIL -->
+    <div class="page hide" id="pProfil">
+      <div class="profil-wrap">
+        <!-- Hero -->
+        <div class="profil-hero">
+          <div class="avatar-ring" id="avatarRing">
+            <div class="avatar-inner" id="avatarInner">👑</div>
+          </div>
+          <div class="profil-pseudo gold" id="profPseudo">—</div>
+          <div class="profil-email" id="profEmail">—</div>
+          <div class="profil-ref-row">
+            <span class="profil-ref-lbl">Code parrain :</span>
+            <span class="profil-ref-code" id="refCode" onclick="shareRef()">—</span>
+          </div>
+          <div id="founderPill" class="hide" style="background:linear-gradient(135deg,var(--g4),var(--g2));color:#000;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:4px 14px;border-radius:100px;box-shadow:0 0 12px rgba(245,200,66,.25)">★ FOUNDER</div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+          <div class="stat-box">
+            <div class="stat-val gold-solid" id="sGems">0</div>
+            <div class="stat-lbl">💎 Gemmes</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-val" id="sPosts">0</div>
+            <div class="stat-lbl">📸 Posts</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-val gold-solid" id="sVotes">0</div>
+            <div class="stat-lbl">⚡ Votes</div>
+          </div>
+        </div>
+
+        <!-- Lucky -->
+        <div id="luckyBox">
+          <div class="lucky-card">
+            <div class="lucky-icon">🎯</div>
+            <div class="lucky-title">Mode Sniper Actif</div>
+            <div class="lucky-desc">Ton prochain vote déclenche une GOLD EXPLOSION</div>
+          </div>
+        </div>
+
+        <!-- Watch Ad (Founder) -->
+        <div id="adBox">
+          <div class="ad-card">
+            <div class="ad-header">
+              <span class="ad-icon">🎬</span>
+              <div>
+                <div class="ad-title">Watch & Earn</div>
+                <div class="ad-desc">Regarde 15 secondes → +2 gemmes</div>
+              </div>
+            </div>
+            <button class="btn-gold" id="adBtn" onclick="startAd()">
+              <span>▶</span><span>Regarder la pub</span>
+            </button>
+            <div id="adProgressWrap">
+              <div class="ad-progress-row">
+                <span>En cours…</span>
+                <span id="adTimer" class="gold-solid">15s</span>
+              </div>
+              <div class="ad-track"><div id="adBar"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- My posts -->
+        <div>
+          <div class="section-h">Mes Posts</div>
+          <div class="myposts-grid" id="myGrid"></div>
+          <div class="empty hide" id="myEmpty" style="padding:32px 0">
+            <div class="empty-icon" style="font-size:32px">📸</div>
+            <div class="empty-desc">Aucun post pour l'instant</div>
+          </div>
+        </div>
+
+        <!-- Logout -->
+        <button class="btn-ghost" onclick="doLogout()">Se déconnecter</button>
+      </div>
+    </div>
+
+    <!-- GUIDE -->
+    <div class="page hide" id="pGuide">
+      <div class="guide-wrap">
+        <div>
+          <div class="guide-title-h gold">La Conquête</div>
+          <div class="guide-sub-h">Le manuel du roi</div>
+        </div>
+
+        <div class="guide-card">
+          <div class="gc-icon">🏆</div>
+          <div class="gc-title">Qu'est-ce que SUDKINGS ?</div>
+          <div class="gc-body">SUDKINGS est la première plateforme de <strong>conquête territoriale</strong> de La Réunion. Seuls les habitants du Grand Sud peuvent poster. Le pouvoir appartient à ceux qui y vivent.</div>
+        </div>
+
+        <div class="guide-card">
+          <div class="gc-icon">💎</div>
+          <div class="gc-title">Les Gemmes</div>
+          <div class="gc-body">La monnaie du pouvoir. Tu commences avec <strong>10 à 15 gemmes</strong> selon le parrainage. Chaque vote coûte <strong>1 gemme</strong>. Gagne-en en parrainant, en regardant des pubs (Founders), ou via le Mode Sniper.</div>
+        </div>
+
+        <div class="guide-card gold-card">
+          <div class="gc-icon">🎯</div>
+          <div class="gc-title">Le Mode Sniper</div>
+          <div class="gc-body">Certains élus voient leur profil passer en <strong>is_lucky = true</strong>. Une aura dorée entoure l'écran. Au prochain vote : une <strong>explosion de particules</strong> secoue l'interface et injecte <strong>+1000 points</strong> en une frappe. La chance appartient aux audacieux.</div>
+        </div>
+
+        <div class="guide-card">
+          <div class="gc-icon">📍</div>
+          <div class="gc-title">Le Verrou Géographique</div>
+          <div class="gc-body"><strong>7 zones actives :</strong> Le Tampon, Saint-Pierre, Saint-Louis, Étang-Salé, Saint-Joseph, Petite-Île, Cilaos. Tu dois être à <strong>moins de 3 km</strong> pour poster. Calcul Haversine précis. Aucune triche.</div>
+        </div>
+
+        <div class="guide-card">
+          <div class="gc-icon">👥</div>
+          <div class="gc-title">Le Parrainage</div>
+          <div class="gc-body">Partage ton code unique. Chaque filleul te rapporte <strong>+5 gemmes</strong> (<strong>+15 si Founder</strong>). Le filleul reçoit <strong>15 gemmes</strong> d'accueil. Construis ton empire.</div>
+        </div>
+
+        <div class="guide-card gold-card">
+          <div class="gc-icon">💰</div>
+          <div class="gc-title">Le Cash Prize</div>
+          <div class="gc-body">Le <strong>Roi du Sud</strong> — celui qui trône en tête du Leaderboard à la fin de chaque saison — empoche <strong>100€ cash</strong>. Le trône ne s'hérite pas. Il se conquiert.</div>
+        </div>
+
+        <div class="guide-card">
+          <div class="gc-icon">⭐</div>
+          <div class="gc-title">Founders</div>
+          <div class="gc-body">Les premiers membres reçoivent le statut <strong>FOUNDER</strong>. Avantages : bordure dorée animée sur l'avatar, parrainage à <strong>+15 gemmes</strong>, accès aux Watch Ads, badge exclusif.</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /pages -->
+
+  <!-- BOTTOM NAV -->
+  <nav id="nav">
+    <button class="nav-item on" data-p="home" onclick="goPage('home')">
+      <span class="nav-icon">🏠</span>
+      <span class="nav-lbl">Mur</span>
+    </button>
+    <button class="nav-item" data-p="leaderboard" onclick="goPage('leaderboard')">
+      <span class="nav-icon">👑</span>
+      <span class="nav-lbl">Rois</span>
+    </button>
+    <button class="nav-item nav-post" data-p="poster" onclick="goPage('poster')">
+      <div class="nav-post-inner"><span style="font-size:22px">⚡</span></div>
+      <span class="nav-lbl">Poster</span>
+    </button>
+    <button class="nav-item" data-p="profil" onclick="goPage('profil')">
+      <span class="nav-icon">👤</span>
+      <span class="nav-lbl">Profil</span>
+    </button>
+    <button class="nav-item" data-p="guide" onclick="goPage('guide')">
+      <span class="nav-icon">📖</span>
+      <span class="nav-lbl">Guide</span>
+    </button>
+  </nav>
+
+</div><!-- /app -->
+
+<!-- POST DETAIL MODAL -->
+<div id="postModal">
+  <div class="modal-top">
+    <button class="modal-back" onclick="closeModal()">←</button>
+    <div class="modal-user gold" id="mUser">—</div>
+    <div class="modal-placeholder"></div>
+  </div>
+  <div class="modal-img-wrap">
+    <img id="mImg" src="" alt=""/>
+    <div class="modal-vote-badge">
+      <span id="mVotes">0</span><span>💎</span>
+    </div>
+  </div>
+  <div class="modal-body">
+    <div class="modal-caption" id="mCaption"></div>
+    <div class="modal-meta">
+      <span class="modal-city" id="mCity"></span>
+      <span class="modal-date" id="mDate"></span>
+    </div>
+    <button class="btn-vote" id="voteBtn" onclick="castVote()">
+      <span>💎</span>
+      <span id="voteBtnTxt">VOTER  •  −1 gemme</span>
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     JAVASCRIPT — COMPLETE APPLICATION LOGIC
+═══════════════════════════════════════════ -->
+<script>
+'use strict';
+/* ── SUPABASE ── */
+const SB_URL = 'https://pjxxubimwzvvfkvjxfwl.supabase.co';
+const SB_KEY = 'GjudSpwAIMDMeE7hBT-NfQ_eGkqvAJ3|';
+const db = supabase.createClient(SB_URL, SB_KEY);
+
+/* ── HOTSPOTS ── */
+const HOTSPOTS = [
+  {name:'Le Tampon',    lat:-21.2767,lng:55.5139},
+  {name:'Saint-Pierre', lat:-21.3393,lng:55.4781},
+  {name:'Saint-Louis',  lat:-21.2703,lng:55.4142},
+  {name:'Étang-Salé',   lat:-21.2667,lng:55.3667},
+  {name:'Saint-Joseph', lat:-21.3833,lng:55.6167},
+  {name:'Petite-Île',   lat:-21.3667,lng:55.5667},
+  {name:'Cilaos',       lat:-21.1333,lng:55.4833},
+];
+const GEO_KM = 3;
+
+/* ── STATE ── */
+let S = {
+  user: null, profile: null,
+  page: 'home',
+  lat: null, lng: null, gpsOk: false, hotspot: null,
+  feedPage: 0, feedLoading: false, feedDone: false,
+  imgBlob: null,
+  modalPost: null,
+  rt: null,
+  adRunning: false,
+};
+
+/* ════════════════════════════════════
+   BOOT
+════════════════════════════════════ */
+window.addEventListener('DOMContentLoaded', boot);
+
+async function boot() {
+  // Splash timer
+  await delay(2000);
+  const {data:{session}} = await db.auth.getSession();
+  hideSplash();
+  if (session) { S.user = session.user; await launchApp(); }
+  else showAuth();
+  setupSwipe();
+  setupKeyboard();
+  setupOnlineStatus();
+}
+
+function hideSplash() {
+  const s = id('splash');
+  s.classList.add('out');
+  setTimeout(()=>s.classList.add('hide'), 600);
+}
+function showAuth() {
+  id('auth').classList.remove('hide');
+  setTimeout(()=>id('auth').classList.remove('out'), 10);
+}
+function hideAuth() {
+  id('auth').classList.add('out');
+  setTimeout(()=>id('auth').classList.add('hide'), 450);
+}
+async function launchApp() {
+  hideAuth();
+  await loadProfile();
+  id('app').classList.add('on');
+  initGPS();
+  loadFeed();
+  loadLeaderboard();
+  setupScrollFeed();
+  setupRealtime();
+  promptInstall();
+}
+
+/* ════════════════════════════════════
+   AUTH
+════════════════════════════════════ */
+function switchAuthTab(t) {
+  id('fLogin').classList.toggle('hide', t!=='login');
+  id('fReg').classList.toggle('hide', t!=='register');
+  id('tabLogin').classList.toggle('on', t==='login');
+  id('tabReg').classList.toggle('on', t==='register');
+}
+function togglePwd(fieldId, btn) {
+  const f = id(fieldId);
+  f.type = f.type==='password' ? 'text' : 'password';
+  btn.textContent = f.type==='password' ? '👁' : '🙈';
+}
+
+async function doLogin() {
+  const email = val('lEmail').trim();
+  const pwd   = val('lPwd');
+  if (!email||!pwd) return toast('Remplis tous les champs','error','⚠️');
+  setBusy('loginBtn', true, '⏳ Connexion…');
+  const {data, error} = await db.auth.signInWithPassword({email, password:pwd});
+  setBusy('loginBtn', false, '⚡ Entrer dans le Sud');
+  if (error) return toast(error.message||'Erreur connexion','error','❌');
+  S.user = data.user;
+  toast('Connexion réussie !','success','✅');
+  await launchApp();
+}
+
+async function doRegister() {
+  const pseudo = val('rPseudo').trim();
+  const email  = val('rEmail').trim();
+  const pwd    = val('rPwd');
+  const ref    = val('rRef').trim().toUpperCase();
+
+  if (!pseudo||!email||!pwd) return toast('Remplis tous les champs','error','⚠️');
+  if (pseudo.length < 3) return toast('Pseudo trop court (min 3 car.)','error','⚠️');
+  if (pwd.length < 6)    return toast('Mot de passe trop court (min 6)','error','⚠️');
+
+  setBusy('regBtn', true, '⏳ Vérification…');
+
+  // Check pseudo dispo
+  const {data:ex} = await db.from('profiles').select('id').eq('pseudo',pseudo).maybeSingle();
+  if (ex) { setBusy('regBtn',false,'👑 Rejoindre l\'Élite'); return toast('Ce pseudo est déjà pris','error','👀'); }
+
+  // Validate referral
+  let referrerId = null, refIsFounder = false;
+  if (ref) {
+    const {data:refRow} = await db.from('profiles').select('id,is_founder').eq('referral_code',ref).maybeSingle();
+    if (!refRow) { setBusy('regBtn',false,'👑 Rejoindre l\'Élite'); return toast('Code parrain invalide','error','❌'); }
+    referrerId = refRow.id; refIsFounder = refRow.is_founder;
+  }
+
+  setBusy('regBtn', true, '⏳ Création du compte…');
+  const {data, error} = await db.auth.signUp({email, password:pwd});
+  setBusy('regBtn', false, '👑 Rejoindre l\'Élite');
+  if (error) return toast(error.message||'Erreur inscription','error','❌');
+
+  const uid  = data.user.id;
+  const code = genCode(pseudo);
+  const gems = referrerId ? 15 : 10;
+
+  await db.from('profiles').insert({
+    id:uid, pseudo, email, gems, referral_code:code,
+    referred_by:referrerId, is_founder:false, is_lucky:false,
+    votes_given:0, posts_count:0, streak:0, last_post_date:null
+  });
+
+  if (referrerId) {
+    const bonus = refIsFounder ? 15 : 5;
+    await db.rpc('increment_gems',{user_id:referrerId, amount:bonus}).catch(()=>
+      db.from('profiles').select('gems').eq('id',referrerId).single().then(r=>
+        db.from('profiles').update({gems:(r.data?.gems||0)+bonus}).eq('id',referrerId)
+      )
+    );
+    toast(`Ton parrain reçoit +${bonus} gemmes 💎`,'gold','🎁');
+  }
+
+  S.user = data.user;
+  toast(`Bienvenue ${pseudo} ! +${gems} gemmes 🎉`,'gold','💎');
+  await launchApp();
+}
+
+function genCode(pseudo) {
+  const c = pseudo.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,5);
+  return c + Math.random().toString(36).slice(2,5).toUpperCase();
+}
+
+/* ════════════════════════════════════
+   PROFILE
+════════════════════════════════════ */
+async function loadProfile() {
+  if (!S.user) return;
+  const {data} = await db.from('profiles').select('*').eq('id',S.user.id).single();
+  if (data) { S.profile = data; renderProfile(); checkLucky(); }
+}
+
+function renderProfile() {
+  const p = S.profile;
+  if (!p) return;
+
+  // gem counter animated
+  animCount('gemCount', parseInt(id('gemCount').textContent)||0, p.gems||0);
+
+  // streak
+  id('streakNum').textContent = p.streak||0;
+
+  // profil page
+  id('profPseudo').textContent = p.pseudo||'—';
+  id('profEmail').textContent  = S.user?.email||'—';
+  id('refCode').textContent    = p.referral_code||'—';
+  id('sGems').textContent      = (p.gems||0).toLocaleString();
+  id('sPosts').textContent     = p.posts_count||0;
+  id('sVotes').textContent     = p.votes_given||0;
+
+  // avatar emoji
+  const g = p.gems||0;
+  let em = '🪨';
+  if (g>=1000) em='👑'; else if (g>=500) em='💎'; else if (g>=200) em='⚡'; else if (g>=50) em='🔥';
+  id('avatarInner').textContent = em;
+
+  // founder
+  if (p.is_founder) {
+    id('avatarRing').classList.add('founder');
+    id('founderPill').classList.remove('hide');
+    id('adBox').style.display='block';
+  }
+
+  // lucky
+  id('luckyBox').style.display = p.is_lucky ? 'block' : 'none';
+}
+
+function checkLucky() {
+  const lucky = S.profile?.is_lucky;
+  id('luckyAura').classList.toggle('on', !!lucky);
+  if (lucky) toast('🎯 MODE SNIPER ACTIF — Ton prochain vote est en or !','gold','🎯');
+}
+
+function animCount(elId, from, to) {
+  const el = id(elId);
+  if (from === to) return;
+  const dur = 600, step = 20;
+  const diff = to - from;
+  let cur = from, t = 0;
+  const iv = setInterval(()=>{
+    t += step;
+    cur = Math.round(from + diff * easeOut(t/dur));
+    el.textContent = cur;
+    if (t >= dur) { el.textContent = to; clearInterval(iv); }
+  }, step);
+  el.closest('#gemPill')?.classList.add('gem-bounce');
+  setTimeout(()=>el.closest('#gemPill')?.classList.remove('gem-bounce'),500);
+}
+function easeOut(t){return 1-(1-t)**3}
+
+/* ════════════════════════════════════
+   REALTIME
+════════════════════════════════════ */
+function setupRealtime() {
+  S.rt = db.channel('sudkings-rt')
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'posts'},pl=>{
+      if (pl.new.user_id !== S.user?.id) prependPost(pl.new);
+    })
+    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'profiles',filter:`id=eq.${S.user.id}`},pl=>{
+      S.profile = {...S.profile,...pl.new};
+      renderProfile(); checkLucky();
+    })
+    .subscribe();
+}
+
+/* ════════════════════════════════════
+   GPS / HAVERSINE
+════════════════════════════════════ */
+function initGPS() {
+  if (!navigator.geolocation) { setGPSUI(false,'GPS non supporté'); return; }
+  navigator.geolocation.watchPosition(
+    pos=>{ S.lat=pos.coords.latitude; S.lng=pos.coords.longitude; evalGPS(); },
+    ()=>setGPSUI(false,'Autorise la géolocalisation'),
+    {enableHighAccuracy:true, maximumAge:8000, timeout:15000}
+  );
+}
+
+function haversine(a,b,c,d) {
+  const R=6371,p=Math.PI/180;
+  const dL=(c-a)*p, dG=(d-b)*p;
+  const x=Math.sin(dL/2)**2+Math.cos(a*p)*Math.cos(c*p)*Math.sin(dG/2)**2;
+  return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x));
+}
+
+function evalGPS() {
+  if (S.lat===null) return;
+  let min=Infinity, near=null;
+  HOTSPOTS.forEach(h=>{
+    const d=haversine(S.lat,S.lng,h.lat,h.lng);
+    if (d<min){min=d;near=h;}
+  });
+  S.hotspot = near;
+  S.gpsOk   = min <= GEO_KM;
+  setGPSUI(S.gpsOk, near?.name, min);
+}
+
+function setGPSUI(ok, spotName, distKm) {
+  const c = id('gpsCard'), d = id('gpsDetail');
+  if (ok) {
+    c.className=''; c.classList.add('unlocked');
+    c.querySelector('.gps-icon').textContent='✅';
+    c.querySelector('.gps-main').textContent=`Zone active : ${spotName}`;
+    d.className='gps-detail gps-unlocked-detail';
+    d.textContent=`${Math.round((distKm||0)*1000)}m du spot — ACCÈS ACCORDÉ`;
+    id('postBtnLocked').classList.add('hide');
+    id('postBtnFree').style.display='flex';
+  } else {
+    c.className=''; c.classList.add('locked');
+    c.querySelector('.gps-icon').textContent='🔒';
+    c.querySelector('.gps-main').textContent='Zone Verrouillée';
+    d.className='gps-detail gps-locked-detail';
+    d.textContent = distKm!==undefined
+      ? `${distKm.toFixed(1)} km du spot le plus proche (${spotName}) — Limite 3 km`
+      : spotName||'';
+    id('postBtnLocked').classList.remove('hide');
+    id('postBtnFree').style.display='none';
+  }
+}
+
+/* ════════════════════════════════════
+   IMAGE COMPRESSION
+════════════════════════════════════ */
+function onFileSelect(e) {
+  const f = e.target.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = ev => {
+    const img = new Image();
+    img.onload = () => {
+      const W=1080, H=1350;
+      const cv = document.createElement('canvas');
+      cv.width=W; cv.height=H;
+      const ctx = cv.getContext('2d');
+      ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
+      const ratio = Math.max(W/img.width, H/img.height);
+      const w=img.width*ratio, h=img.height*ratio;
+      ctx.drawImage(img, (W-w)/2, (H-h)/2, w, h);
+      cv.toBlob(blob=>{
+        S.imgBlob = blob;
+        id('imgPreview').src = URL.createObjectURL(blob);
+        id('imgPreviewWrap').style.display='block';
+        id('uploadZone').classList.add('hide');
+        toast('Image optimisée 1080 × 1350 ✓','success','📸');
+      },'image/jpeg',0.72);
+    };
+    img.src = ev.target.result;
+  };
+  r.readAsDataURL(f);
+}
+function clearImg() {
+  S.imgBlob=null;
+  id('fileInput').value='';
+  id('imgPreviewWrap').style.display='none';
+  id('uploadZone').classList.remove('hide');
+}
+
+/* ════════════════════════════════════
+   POST
+════════════════════════════════════ */
+async function doPost() {
+  if (!S.gpsOk)    return toast('Zone verrouillée','error','🔒');
+  if (!S.imgBlob)  return toast('Sélectionne une photo','error','📸');
+  if (!S.profile)  return;
+
+  const caption = val('caption').trim();
+  const btn = id('postBtnFree');
+  btn.disabled=true; btn.innerHTML='<span>⏳</span><span>Upload…</span>';
+
+  const fname = `${S.user.id}_${Date.now()}.jpg`;
+  const {error:ue} = await db.storage.from('photos').upload(fname, S.imgBlob, {contentType:'image/jpeg'});
+  if (ue) { btn.disabled=false; btn.innerHTML='<span>⚡</span><span>Libérer le Spot</span>'; return toast('Erreur upload','error','❌'); }
+
+  const {data:{publicUrl}} = db.storage.from('photos').getPublicUrl(fname);
+  const {error:pe} = await db.from('posts').insert({
+    user_id:S.user.id, pseudo:S.profile.pseudo, image_url:publicUrl,
+    caption, city:S.hotspot?.name||'Grand Sud', votes_count:0,
+    lat:S.lat, lng:S.lng
+  });
+  btn.disabled=false; btn.innerHTML='<span>⚡</span><span>Libérer le Spot</span>';
+  if (pe) return toast('Erreur post','error','❌');
+
+  // streak
+  const today = new Date().toDateString();
+  const yest  = new Date(Date.now()-86400000).toDateString();
+  const last  = S.profile.last_post_date;
+  const streak = last===yest ? (S.profile.streak||0)+1 : last===today ? S.profile.streak : 1;
+  await db.from('profiles').update({
+    posts_count:(S.profile.posts_count||0)+1, streak, last_post_date:today
+  }).eq('id',S.user.id);
+  S.profile.posts_count=(S.profile.posts_count||0)+1; S.profile.streak=streak;
+
+  clearImg();
+  id('caption').value=''; id('capCount').textContent='0/200';
+  toast(`Spot libéré ! 🔥 Streak : ${streak} jour${streak>1?'s':''}`, 'gold','⚡');
+  vib([30,20,60,20,100]);
+  goPage('home');
+  id('wallFeed').innerHTML=''; S.feedPage=0; S.feedDone=false;
+  loadFeed();
+}
+
+/* ════════════════════════════════════
+   FEED
+════════════════════════════════════ */
+const PAGE_SZ = 8;
+
+function setupScrollFeed() {
+  id('pHome').addEventListener('scroll', ()=>{
+    const el = id('pHome');
+    if (el.scrollHeight - el.scrollTop - el.clientHeight < 300 && !S.feedLoading && !S.feedDone)
+      loadFeed();
+  },{passive:true});
+}
+
+async function loadFeed() {
+  if (S.feedLoading||S.feedDone) return;
+  S.feedLoading=true;
+  id('feedSpinner').classList.remove('hide');
+  const from=S.feedPage*PAGE_SZ, to=from+PAGE_SZ-1;
+  const {data,error} = await db.from('posts').select('*').order('created_at',{ascending:false}).range(from,to);
+  id('feedSpinner').classList.add('hide');
+  S.feedLoading=false;
+  if (error||!data) return;
+  if (!data.length && !S.feedPage) { id('feedEmpty').classList.remove('hide'); return; }
+  if (data.length < PAGE_SZ) S.feedDone=true;
+  data.forEach(p=>appendPost(p));
+  S.feedPage++;
+}
+
+function appendPost(post) { id('wallFeed').appendChild(buildCard(post)); }
+function prependPost(post) {
+  const c = buildCard(post);
+  c.style.opacity='0'; c.style.transform='scale(.95)';
+  id('wallFeed').prepend(c);
+  requestAnimationFrame(()=>{
+    c.style.transition='all .5s cubic-bezier(.25,.46,.45,.94)';
+    c.style.opacity='1'; c.style.transform='scale(1)';
+  });
+}
+
+function buildCard(post) {
+  const d = document.createElement('div');
+  d.className='post-card'; d.dataset.id=post.id;
+  d.onclick=()=>openModal(post);
+  d.innerHTML=`
+    <img src="${esc(post.image_url)}" alt="" loading="lazy" decoding="async" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 4 5%22%3E%3Crect fill=%22%231c1c22%22 width=%224%22 height=%225%22/%3E%3C/svg%3E'"/>
+    <div class="post-overlay"></div>
+    <div class="post-vote-badge"><span>${post.votes_count||0}</span><span>💎</span></div>
+    <div class="post-meta">
+      <div class="post-meta-left">
+        <div class="post-pseudo">${esc(post.pseudo||'—')}</div>
+        <div class="post-city">${esc(post.city||'')} · ${ago(post.created_at)}</div>
+        ${post.caption?`<div class="post-caption">${esc(post.caption)}</div>`:''}
+      </div>
+    </div>
+  `;
+  // Double-tap open to vote
+  let lt=0;
+  d.addEventListener('touchend',e=>{
+    const n=Date.now();
+    if(n-lt<300){e.preventDefault();openModal(post);}
+    lt=n;
+  },{passive:false});
+  return d;
+}
+
+/* ════════════════════════════════════
+   LEADERBOARD
+════════════════════════════════════ */
+async function loadLeaderboard() {
+  const {data} = await db.from('profiles').select('pseudo,gems,posts_count,is_founder').order('gems',{ascending:false}).limit(10);
+  const el = id('lbList');
+  if (!data||!data.length) { el.innerHTML='<div class="empty"><div class="empty-icon">👑</div><div class="empty-title">Aucun roi encore</div></div>'; return; }
+  el.innerHTML='';
+  data.forEach((p,i)=>{
+    const rank=i+1, rc=rank<=3?`r${rank}`:'';
+    const g=p.gems||0;
+    let em='🪨'; if(g>=1000)em='👑'; else if(g>=500)em='💎'; else if(g>=200)em='⚡'; else if(g>=50)em='🔥';
+    const d=document.createElement('div');
+    d.className=`lb-card ${rc}`;
+    d.innerHTML=`
+      ${rank===1?'<div class="lb-crown">👑</div>':''}
+      <div class="lb-rank">#${rank}</div>
+      <div class="lb-avatar">${em}</div>
+      <div class="lb-info">
+        <div class="lb-pseudo">${esc(p.pseudo||'—')}${p.is_founder?'<span class="founder-badge-sm">Founder</span>':''}</div>
+        <div class="lb-stats">${(g).toLocaleString()} gemmes · ${p.posts_count||0} posts</div>
+      </div>
+      <div class="lb-gems">${g.toLocaleString()} 💎</div>
+    `;
+    el.appendChild(d);
+  });
+}
+
+/* ════════════════════════════════════
+   MODAL / VOTE
+════════════════════════════════════ */
+function openModal(post) {
+  S.modalPost=post;
+  id('mUser').textContent    = post.pseudo||'—';
+  id('mImg').src             = post.image_url;
+  id('mVotes').textContent   = post.votes_count||0;
+  id('mCaption').textContent = post.caption||'';
+  id('mCity').textContent    = post.city||'';
+  id('mDate').textContent    = ago(post.created_at);
+
+  const isOwn = post.user_id===S.user?.id;
+  const vBtn = id('voteBtn');
+  vBtn.disabled = isOwn;
+  id('voteBtnTxt').textContent = isOwn ? 'Ton post' : 'VOTER  •  −1 gemme';
+  vBtn.style.opacity = isOwn ? '.35' : '1';
+
+  id('postModal').classList.add('on');
+}
+function closeModal() {
+  id('postModal').classList.remove('on');
+  S.modalPost=null;
+}
+
+async function castVote() {
+  const p = S.modalPost, prof = S.profile;
+  if (!p||!prof) return;
+  if (p.user_id===S.user.id) return toast('Tu ne peux pas voter pour toi-même','error','🤷');
+  if ((prof.gems||0)<1)      return toast('Plus de gemmes ! Parraine un ami 💎','error','💎');
+
+  const isLucky = prof.is_lucky;
+  const pts     = isLucky ? 1000 : 1;
+
+  const vBtn = id('voteBtn');
+  vBtn.disabled=true; id('voteBtnTxt').textContent='…';
+
+  // Deduct gem + reset lucky
+  const ng = prof.gems - 1;
+  await db.from('profiles').update({gems:ng, is_lucky:false, votes_given:(prof.votes_given||0)+1}).eq('id',S.user.id);
+
+  // Increment votes
+  const {data:pd} = await db.from('posts').select('votes_count').eq('id',p.id).single();
+  const nv = (pd?.votes_count||0)+pts;
+  await db.from('posts').update({votes_count:nv}).eq('id',p.id);
+
+  // Local state
+  S.profile = {...prof, gems:ng, is_lucky:false, votes_given:(prof.votes_given||0)+1};
+  S.modalPost = {...p, votes_count:nv};
+
+  renderProfile();
+  id('mVotes').textContent = nv;
+  // Update feed card
+  const fc = document.querySelector(`[data-id="${p.id}"] .post-vote-badge span`);
+  if (fc) fc.textContent = nv;
+
+  vBtn.disabled=false; id('voteBtnTxt').textContent='VOTER  •  −1 gemme';
+
+  // Ripple on modal image
+  rippleEffect(id('mImg').parentElement);
+
+  if (isLucky) {
+    closeModal();
+    boom();
+    toast('💥 GOLD EXPLOSION ! +1000 points injectés','gold','💥');
+    id('luckyAura').classList.remove('on');
+    vib([50,20,80,20,150,30,200]);
+  } else {
+    toast('−1 gemme · Vote enregistré','gold','💎');
+    vib([20]);
+  }
+  checkLucky();
+}
+
+function rippleEffect(container) {
+  const r=document.createElement('div');
+  r.className='ripple';
+  r.style.cssText='width:160px;height:160px;left:calc(50% - 80px);top:calc(50% - 80px)';
+  container.appendChild(r);
+  setTimeout(()=>r.remove(),700);
+}
+
+/* ════════════════════════════════════
+   GOLD EXPLOSION CANVAS
+════════════════════════════════════ */
+function boom() {
+  const cv = id('boom');
+  cv.style.display='block';
+  cv.width = window.innerWidth;
+  cv.height = window.innerHeight;
+  const ctx = cv.getContext('2d');
+  const cols = ['#f5c842','#fce060','#e8a020','#c47a10','#fff8dc','#8a4d00'];
+  const particles = Array.from({length:200},()=>({
+    x: cv.width*(.2+Math.random()*.6),
+    y: cv.height*(.3+Math.random()*.3),
+    vx:(Math.random()-.5)*18,
+    vy:(Math.random()-.5)*18-5,
+    r: 3+Math.random()*10,
+    col: cols[Math.floor(Math.random()*cols.length)],
+    alpha:1, decay:.012+Math.random()*.012,
+    rot:Math.random()*Math.PI*2,
+    rspd:(Math.random()-.5)*.25,
+    shape:Math.random()>.5?0:1
+  }));
+
+  // Flash
+  ctx.fillStyle='rgba(245,200,66,.08)';
+  ctx.fillRect(0,0,cv.width,cv.height);
+
+  let txtA=0, frame=0;
+  const draw = () => {
+    ctx.clearRect(0,0,cv.width,cv.height);
+    frame++;
+
+    // Mega text
+    const ta = frame<20 ? frame/20 : frame<60 ? 1 : Math.max(0,1-(frame-60)/20);
+    if (ta>0) {
+      ctx.save();
+      ctx.globalAlpha=ta;
+      const fs = 44+Math.sin(frame*.08)*3;
+      ctx.font=`700 ${fs}px 'Cormorant Garamond',serif`;
+      ctx.fillStyle=`rgba(245,200,66,${ta})`;
+      ctx.textAlign='center';
+      ctx.shadowBlur=30; ctx.shadowColor='#f5c842';
+      ctx.fillText('💎 GOLD EXPLOSION 💎',cv.width/2,cv.height/2);
+      ctx.font=`700 22px 'JetBrains Mono',monospace`;
+      ctx.fillStyle=`rgba(252,224,96,${ta})`;
+      ctx.shadowBlur=20;
+      ctx.fillText('+1000 POINTS',cv.width/2,cv.height/2+46);
+      ctx.restore();
+    }
+
+    // Particles
+    let any=false;
+    particles.forEach(p=>{
+      if(p.alpha<=0) return; any=true;
+      p.x+=p.vx; p.y+=p.vy; p.vy+=.3; p.vx*=.99;
+      p.alpha-=p.decay; p.rot+=p.rspd;
+      ctx.save();
+      ctx.globalAlpha=Math.max(0,p.alpha);
+      ctx.translate(p.x,p.y); ctx.rotate(p.rot);
+      ctx.fillStyle=p.col;
+      ctx.shadowBlur=6; ctx.shadowColor=p.col;
+      if(p.shape===0){
+        ctx.beginPath(); ctx.arc(0,0,p.r,0,Math.PI*2); ctx.fill();
+      } else {
+        ctx.beginPath();
+        ctx.moveTo(0,-p.r); ctx.lineTo(p.r*.6,0); ctx.lineTo(0,p.r); ctx.lineTo(-p.r*.6,0);
+        ctx.closePath(); ctx.fill();
+      }
+      ctx.restore();
+    });
+
+    if(any||ta>0) requestAnimationFrame(draw);
+    else { cv.style.display='none'; ctx.clearRect(0,0,cv.width,cv.height); }
+  };
+  draw();
+}
+
+/* ════════════════════════════════════
+   MY POSTS (profile page)
+════════════════════════════════════ */
+async function loadMyPosts() {
+  const {data} = await db.from('posts').select('id,image_url,votes_count').eq('user_id',S.user.id).order('created_at',{ascending:false}).limit(9);
+  const g = id('myGrid'), e = id('myEmpty');
+  g.innerHTML='';
+  if (!data||!data.length) { e.classList.remove('hide'); return; }
+  e.classList.add('hide');
+  data.forEach(p=>{
+    const d=document.createElement('div');
+    d.className='mpost-thumb';
+    d.onclick=()=>openModal(p);
+    d.innerHTML=`<img src="${esc(p.image_url)}" alt="" loading="lazy"/><div class="mpost-overlay">💎 ${p.votes_count||0}</div>`;
+    g.appendChild(d);
+  });
+}
+
+/* ════════════════════════════════════
+   WATCH AD
+════════════════════════════════════ */
+function startAd() {
+  if (S.adRunning) return;
+  S.adRunning=true;
+  const btn=id('adBtn'), pw=id('adProgressWrap'), bar=id('adBar'), tmr=id('adTimer');
+  btn.disabled=true; btn.innerHTML='<span>⏳</span><span>En cours…</span>';
+  pw.style.display='block';
+  let s=15;
+  const iv=setInterval(async()=>{
+    s--;
+    tmr.textContent=s+'s';
+    bar.style.width=`${((15-s)/15)*100}%`;
+    if(s<=0){
+      clearInterval(iv);
+      const ng=(S.profile?.gems||0)+2;
+      await db.from('profiles').update({gems:ng}).eq('id',S.user.id);
+      if(S.profile) S.profile.gems=ng;
+      renderProfile();
+      S.adRunning=false;
+      btn.disabled=false; btn.innerHTML='<span>▶</span><span>Regarder la pub</span>';
+      pw.style.display='none'; bar.style.width='0'; tmr.textContent='15s';
+      toast('+2 gemmes gagnées ! 💎','gold','🎬');
+      vib([30,10,60]);
+      // Cooldown
+      btn.disabled=true; btn.innerHTML='<span>⏳</span><span>Disponible dans 30s</span>';
+      setTimeout(()=>{btn.disabled=false;btn.innerHTML='<span>▶</span><span>Regarder la pub</span>';},30000);
+    }
+  },1000);
+}
+
+/* ════════════════════════════════════
+   SHARE REFERRAL
+════════════════════════════════════ */
+function shareRef() {
+  const code = S.profile?.referral_code; if(!code) return;
+  const txt = `Rejoins-moi sur SUDKINGS avec mon code parrain ${code} et gagne 15 gemmes 💎\nhttps://sudkings.app`;
+  if (navigator.share) navigator.share({title:'SUDKINGS',text:txt});
+  else if (navigator.clipboard) { navigator.clipboard.writeText(txt); toast('Code copié !','success','📋'); }
+}
+
+/* ════════════════════════════════════
+   NAVIGATION
+════════════════════════════════════ */
+const PAGE_MAP = {home:'pHome',leaderboard:'pLeader',poster:'pPoster',profil:'pProfil',guide:'pGuide'};
+
+function goPage(name) {
+  Object.entries(PAGE_MAP).forEach(([k,v])=>{
+    id(v).classList.toggle('hide', k!==name);
+  });
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.toggle('on',b.dataset.p===name));
+  S.page=name;
+  if(name==='leaderboard') loadLeaderboard();
+  if(name==='profil'){loadProfile();loadMyPosts();}
+}
+
+/* ════════════════════════════════════
+   LOGOUT
+════════════════════════════════════ */
+async function doLogout() {
+  await db.auth.signOut();
+  if(S.rt) db.removeChannel(S.rt);
+  S={...S, user:null,profile:null,feedPage:0,feedDone:false,feedLoading:false,rt:null};
+  id('wallFeed').innerHTML='';
+  id('app').classList.remove('on');
+  id('auth').classList.remove('hide','out');
+  switchAuthTab('login');
+  toast('À bientôt 👋','default','👋');
+}
+
+/* ════════════════════════════════════
+   SWIPE NAVIGATION
+════════════════════════════════════ */
+function setupSwipe() {
+  let sx=0,sy=0;
+  const pages=['home','leaderboard','poster','profil','guide'];
+  document.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});
+  document.addEventListener('touchend',e=>{
+    const dx=e.changedTouches[0].clientX-sx;
+    const dy=Math.abs(e.changedTouches[0].clientY-sy);
+    if(Math.abs(dx)>65&&dy<50&&S.page!=='home'){
+      const i=pages.indexOf(S.page);
+      if(dx<0&&i<pages.length-1) goPage(pages[i+1]);
+      if(dx>0&&i>0) goPage(pages[i-1]);
+    }
+  },{passive:true});
+}
+
+/* ════════════════════════════════════
+   KEYBOARD
+════════════════════════════════════ */
+function setupKeyboard() {
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape') closeModal();
+    const m={1:'home',2:'leaderboard',3:'poster',4:'profil',5:'guide'};
+    if(m[e.key]&&id('app').classList.contains('on')) goPage(m[e.key]);
+  });
+}
+
+/* ════════════════════════════════════
+   ONLINE / OFFLINE
+════════════════════════════════════ */
+function setupOnlineStatus() {
+  window.addEventListener('online', ()=>toast('Reconnecté ✓','success','📶'));
+  window.addEventListener('offline',()=>toast('Hors ligne — Mode limité','error','📵'));
+}
+
+/* ════════════════════════════════════
+   PWA INSTALL
+════════════════════════════════════ */
+let dP;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();dP=e;setTimeout(()=>toast('Installe SUDKINGS 📲','gold','📲'),6000);});
+function promptInstall() { /* auto fires via event */ }
+
+/* ════════════════════════════════════
+   TOAST
+════════════════════════════════════ */
+function toast(msg, type='default', icon='ℹ️') {
+  const c=id('toasts');
+  const t=document.createElement('div');
+  t.className=`toast t-${type}`;
+  t.innerHTML=`<span>${icon}</span><span>${esc(msg)}</span>`;
+  c.appendChild(t);
+  vib(type==='error'?[30,15,30]:type==='gold'?[20,10,50]:15);
+  const dur=type==='gold'?3500:2500;
+  setTimeout(()=>{t.classList.add('out');setTimeout(()=>t.remove(),350);},dur);
+}
+
+/* ════════════════════════════════════
+   AUTH STATE LISTENER
+════════════════════════════════════ */
+db.auth.onAuthStateChange(async(event,session)=>{
+  if(event==='SIGNED_IN'&&session&&!S.user){S.user=session.user;await launchApp();}
+});
+
+/* ════════════════════════════════════
+   UTILS
+════════════════════════════════════ */
+const id  = i=>document.getElementById(i);
+const val = i=>(id(i)?.value)||'';
+const esc = s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const delay = ms=>new Promise(r=>setTimeout(r,ms));
+const vib = p=>navigator.vibrate?.(p);
+function ago(ds) {
+  if(!ds) return '';
+  const d=(Date.now()-new Date(ds).getTime())/1000;
+  if(d<60)  return 'à l\'instant';
+  if(d<3600) return `${Math.floor(d/60)}min`;
+  if(d<86400) return `${Math.floor(d/3600)}h`;
+  if(d<604800) return `${Math.floor(d/86400)}j`;
+  return new Date(ds).toLocaleDateString('fr-FR',{day:'numeric',month:'short'});
+}
+function setBusy(btnId, busy, label) {
+  const b=id(btnId); if(!b) return;
+  b.disabled=busy; b.innerHTML=`<span>${label}</span>`;
+}
+
+/* ════════════════════════════════════
+   CSS PATCH — gem bounce via JS
+════════════════════════════════════ */
+const styleEl=document.createElement('style');
+styleEl.textContent=`
+  .gem-bounce{animation:gBounce .5s cubic-bezier(.34,1.56,.64,1)!important}
+  @keyframes gBounce{0%{transform:scale(1)}40%{transform:scale(1.45)}70%{transform:scale(.92)}100%{transform:scale(1)}}
+  #pHome{scroll-snap-type:y mandatory}
+  .post-card{scroll-snap-align:start}
+  @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+`;
+document.head.appendChild(styleEl);
+</script>
+
+<!-- ════════════════════════════════════
+     SUPABASE SQL — COPIE DANS SQL EDITOR
+══════════════════════════════════════
+CREATE TABLE profiles (
+  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  pseudo TEXT UNIQUE NOT NULL,
+  email TEXT,
+  gems INTEGER DEFAULT 10,
+  referral_code TEXT UNIQUE,
+  referred_by UUID REFERENCES profiles(id),
+  is_founder BOOLEAN DEFAULT false,
+  is_lucky BOOLEAN DEFAULT false,
+  votes_given INTEGER DEFAULT 0,
+  posts_count INTEGER DEFAULT 0,
+  streak INTEGER DEFAULT 0,
+  last_post_date TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE TABLE posts (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
+  pseudo TEXT,
+  image_url TEXT NOT NULL,
+  caption TEXT DEFAULT '',
+  city TEXT DEFAULT 'Grand Sud',
+  votes_count INTEGER DEFAULT 0,
+  lat FLOAT, lng FLOAT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE OR REPLACE FUNCTION increment_gems(user_id UUID, amount INTEGER)
+RETURNS void AS $$
+  UPDATE profiles SET gems = gems + amount WHERE id = user_id;
+$$ LANGUAGE sql SECURITY DEFINER;
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE posts ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "read_profiles" ON profiles FOR SELECT USING (true);
+CREATE POLICY "insert_profile" ON profiles FOR INSERT WITH CHECK (auth.uid()=id);
+CREATE POLICY "update_profile" ON profiles FOR UPDATE USING (auth.uid()=id);
+CREATE POLICY "read_posts" ON posts FOR SELECT USING (true);
+CREATE POLICY "insert_post" ON posts FOR INSERT WITH CHECK (auth.uid()=user_id);
+CREATE POLICY "update_votes" ON posts FOR UPDATE USING (true);
+ALTER PUBLICATION supabase_realtime ADD TABLE posts;
+ALTER PUBLICATION supabase_realtime ADD TABLE profiles;
+-- Bucket: Storage → New Bucket → "photos" → Public ON
+── -->
+</body>
+</html>
