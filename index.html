@@ -1,17 +1,16 @@
-Voici le code complet, entièrement revu et corrigé, avec toutes les interactions en temps réel liées à Supabase, la fonction RPC, la validation des codes de parrainage, le timer dynamique, et une expérience fluide.
+Voici une version complète, fluide, responsive (mobile + desktop), avec toutes les connexions aux tables Supabase, animations avancées, et une expérience premium.
 
 ```html
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"/>
-<meta name="theme-color" content="#050505"/>
-<meta name="apple-mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#050505">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>THE SPOT — Pre-Launch Experience</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 * {
@@ -22,142 +21,165 @@ Voici le code complet, entièrement revu et corrigé, avec toutes les interactio
 }
 
 :root {
-  --bg: #050505;
-  --bg2: #0A0A0A;
-  --em: #00FFA3;
-  --em-dark: #00CC82;
+  --bg-deep: #030303;
+  --bg-surface: #0A0A0C;
+  --bg-elevated: #111115;
+  --border-subtle: rgba(255,255,255,0.06);
+  --emerald: #00FFA3;
+  --emerald-glow: rgba(0,255,163,0.2);
   --gold: #FFD700;
-  --gold-dark: #B8860B;
-  --text: #F0F0F0;
-  --text-dim: #888888;
-  --text-muted: #3A3A3A;
-  --red: #FF4444;
-  --border: rgba(255,255,255,0.06);
+  --gold-glow: rgba(255,215,0,0.15);
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0A0A0;
+  --text-muted: #5A5A5A;
+  --danger: #FF4444;
+  --success: #00FFA3;
 }
 
 body {
-  font-family: 'DM Sans', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  overflow: hidden;
-  height: 100vh;
-  position: fixed;
-  width: 100%;
+  font-family: 'Inter', sans-serif;
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  overflow-x: hidden;
+  min-height: 100vh;
 }
 
-/* Background tactique */
-#mapCanvas {
+/* Background dynamique */
+#dynamicBg {
   position: fixed;
   inset: 0;
   z-index: 0;
-  background: radial-gradient(ellipse 120% 80% at 50% 50%, #0D1F14 0%, #050505 80%);
-  overflow: hidden;
+  background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(0,255,163,0.03) 0%, transparent 60%),
+              radial-gradient(circle at 20% 80%, rgba(255,215,0,0.02) 0%, transparent 50%);
 }
 
-#mapCanvas::before {
-  content: '';
-  position: absolute;
-  inset: -20%;
-  background-image: linear-gradient(rgba(0,255,163,0.04) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(0,255,163,0.04) 1px, transparent 1px);
-  background-size: 60px 60px;
-  animation: drift 40s linear infinite;
-}
-
-@keyframes drift {
-  to { transform: translate(60px, 60px); }
-}
-
-/* Dots mouvants */
-.map-dot {
-  position: absolute;
-  width: 4px;
-  height: 4px;
-  background: var(--em);
-  border-radius: 50%;
-  box-shadow: 0 0 12px var(--em);
-  opacity: 0.6;
-  animation: pulseDot 3s infinite alternate;
-}
-
-@keyframes pulseDot {
-  0% { opacity: 0.2; transform: scale(1); }
-  100% { opacity: 0.8; transform: scale(1.5); }
-}
-
-/* Structure */
-#root {
+.grid-overlay {
   position: fixed;
   inset: 0;
+  background-image: 
+    linear-gradient(rgba(0,255,163,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,255,163,0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  pointer-events: none;
+  animation: gridShift 20s linear infinite;
+}
+
+@keyframes gridShift {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(50px, 50px); }
+}
+
+/* Particules flottantes */
+.particle {
+  position: fixed;
+  width: 2px;
+  height: 2px;
+  background: var(--emerald);
+  border-radius: 50%;
+  opacity: 0;
+  animation: floatParticle 8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes floatParticle {
+  0%, 100% { opacity: 0; transform: translateY(0) scale(1); }
+  20% { opacity: 0.6; }
+  80% { opacity: 0.3; transform: translateY(-100vh) scale(0); }
+}
+
+/* Container principal */
+.app-container {
+  position: relative;
   z-index: 2;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow-y: auto;
-  padding: env(safe-area-inset-top, 20px) 16px env(safe-area-inset-bottom, 20px);
+  padding: 20px;
 }
 
+/* Écrans */
 .screen {
+  display: none;
   width: 100%;
-  max-width: 480px;
+  max-width: 500px;
   margin: 0 auto;
-  transition: opacity 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1), transform 0.4s ease;
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(16px);
+  animation: fadeInUp 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.1);
 }
 
 .screen.active {
-  opacity: 1;
-  pointer-events: all;
-  transform: translateY(0);
+  display: block;
 }
 
-/* Cartes glassmorphiques */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Cartes Glassmorphiques */
 .glass-card {
-  background: rgba(10,10,10,0.75);
-  backdrop-filter: blur(28px);
-  border: 1px solid var(--border);
+  background: rgba(10, 10, 12, 0.75);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border-subtle);
   border-radius: 32px;
-  padding: 28px 20px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 0 0.5px rgba(255,255,255,0.02);
+  padding: 32px 24px;
+  box-shadow: 0 25px 45px -12px rgba(0,0,0,0.5);
 }
 
 /* Logo */
-.logo-container {
+.logo-section {
   text-align: center;
-  margin-bottom: 28px;
+  margin-bottom: 32px;
 }
 
-.logo-icon {
-  width: 70px;
-  height: 70px;
-  background: linear-gradient(135deg, #00FFA3, #00A86B);
-  border-radius: 22px;
-  margin: 0 auto 12px;
+.logo-3d {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, var(--emerald), #00CC82);
+  border-radius: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 38px;
+  margin: 0 auto 16px;
+  font-size: 42px;
   font-weight: 800;
-  font-family: 'Syne', sans-serif;
-  color: #050505;
-  box-shadow: 0 8px 20px rgba(0,255,163,0.2);
+  font-family: 'Space Grotesk', monospace;
+  color: #030303;
+  box-shadow: 0 0 30px var(--emerald-glow);
+  transform: rotate(5deg);
+  transition: transform 0.3s ease;
 }
 
-.logo-text {
-  font-family: 'Syne', sans-serif;
-  font-size: 20px;
-  font-weight: 800;
-  letter-spacing: 0.2em;
-  background: linear-gradient(135deg, #FFF, #AAA);
+.logo-3d:hover {
+  transform: rotate(0deg) scale(1.02);
+}
+
+.logo-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  background: linear-gradient(135deg, #FFFFFF, #888888);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
+.logo-sub {
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  color: var(--text-muted);
+  margin-top: 8px;
+}
+
 /* Tabs */
-.tabs {
+.tab-bar {
   display: flex;
   gap: 8px;
   background: rgba(255,255,255,0.03);
@@ -166,91 +188,97 @@ body {
   margin-bottom: 28px;
 }
 
-.tab {
+.tab-btn {
   flex: 1;
   background: transparent;
   border: none;
   padding: 12px;
   border-radius: 60px;
   font-weight: 600;
-  font-size: 14px;
-  color: var(--text-dim);
-  transition: all 0.2s;
+  font-size: 13px;
+  color: var(--text-secondary);
   cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.tab.active {
+.tab-btn.active {
   background: rgba(0,255,163,0.12);
-  color: var(--em);
-  box-shadow: 0 0 8px rgba(0,255,163,0.2);
+  color: var(--emerald);
+  box-shadow: 0 0 12px rgba(0,255,163,0.15);
 }
 
-/* Champs */
-.input-group {
-  margin-bottom: 18px;
+/* Formulaires */
+.form-group {
+  margin-bottom: 20px;
 }
 
-.input-label {
+.form-label {
+  display: block;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--text-dim);
-  margin-bottom: 6px;
-  display: block;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
 }
 
 .input-wrapper {
   position: relative;
 }
 
-.input-field {
+.form-input {
   width: 100%;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 18px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
   padding: 14px 16px;
-  color: var(--text);
+  color: var(--text-primary);
   font-size: 15px;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
 }
 
-.input-field:focus {
-  border-color: rgba(0,255,163,0.4);
+.form-input:focus {
   outline: none;
+  border-color: var(--emerald);
   background: rgba(0,255,163,0.02);
+  box-shadow: 0 0 0 3px var(--emerald-glow);
 }
 
-.input-field.error {
-  border-color: var(--red);
+.form-input.error {
+  border-color: var(--danger);
 }
 
-.input-field.valid {
-  border-color: var(--em);
+.form-input.valid {
+  border-color: var(--success);
 }
 
-.eye-toggle {
+.eye-icon {
   position: absolute;
   right: 16px;
   top: 50%;
   transform: translateY(-50%);
   background: none;
   border: none;
-  color: var(--text-dim);
+  color: var(--text-secondary);
   cursor: pointer;
   font-size: 18px;
 }
 
-.validation-hint {
+.hint-text {
   font-size: 10px;
   margin-top: 6px;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
 }
 
-.validation-hint.valid { color: var(--em); }
-.validation-hint.error { color: var(--red); }
+.hint-text.success {
+  color: var(--success);
+}
+
+.hint-text.error {
+  color: var(--danger);
+}
 
 /* Boutons */
 .btn-primary {
@@ -258,55 +286,63 @@ body {
   padding: 16px;
   border: none;
   border-radius: 60px;
-  background: linear-gradient(135deg, var(--em-dark), var(--em));
-  color: #050505;
+  background: linear-gradient(135deg, var(--emerald), #00CC82);
+  color: #030303;
   font-weight: 800;
   font-size: 14px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: transform 0.1s, box-shadow 0.2s;
-  margin-top: 12px;
-  font-family: 'Syne', sans-serif;
+  transition: all 0.2s ease;
+  margin-top: 8px;
+  font-family: 'Space Grotesk', monospace;
 }
 
-.btn-primary:active { transform: scale(0.97); }
-.btn-primary:disabled { opacity: 0.5; transform: none; cursor: not-allowed; }
+.btn-primary:active {
+  transform: scale(0.97);
+}
 
-.btn-outline {
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-secondary {
+  width: 100%;
   background: transparent;
-  border: 1px solid rgba(255,255,255,0.15);
+  border: 1px solid var(--border-subtle);
   border-radius: 60px;
   padding: 12px;
-  color: var(--text-dim);
+  color: var(--text-secondary);
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 /* OTP */
-.otp-container {
+.otp-grid {
   display: flex;
   gap: 12px;
   justify-content: center;
   margin: 24px 0;
 }
 
-.otp-input {
-  width: 50px;
+.otp-digit {
+  width: 52px;
   height: 60px;
   background: rgba(255,255,255,0.05);
-  border: 1.5px solid rgba(255,255,255,0.1);
+  border: 1.5px solid var(--border-subtle);
   border-radius: 18px;
   text-align: center;
   font-size: 24px;
   font-weight: 700;
-  font-family: 'JetBrains Mono', monospace;
-  color: var(--text);
+  font-family: 'Space Grotesk', monospace;
+  color: var(--text-primary);
 }
 
-.otp-input:focus {
-  border-color: var(--em);
+.otp-digit:focus {
+  border-color: var(--emerald);
   outline: none;
 }
 
@@ -318,11 +354,23 @@ body {
   margin-bottom: 24px;
 }
 
-.rider-badge {
+.user-info h3 {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.user-info p {
+  font-size: 10px;
+  color: var(--text-secondary);
+  letter-spacing: 0.1em;
+}
+
+/* Badges */
+.badge {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 16px;
+  padding: 6px 18px;
   border-radius: 60px;
   font-size: 11px;
   font-weight: 700;
@@ -330,269 +378,436 @@ body {
 }
 
 .badge-founder {
-  background: rgba(255,215,0,0.1);
+  background: rgba(255,215,0,0.12);
   border: 1px solid rgba(255,215,0,0.3);
   color: var(--gold);
-  animation: pulse-glow 2s infinite;
+  animation: goldPulse 2s infinite;
 }
 
 .badge-rider {
   background: rgba(0,255,163,0.08);
   border: 1px solid rgba(0,255,163,0.2);
-  color: var(--em);
+  color: var(--emerald);
 }
 
-@keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 5px rgba(255,215,0,0.2); }
-  50% { box-shadow: 0 0 20px rgba(255,215,0,0.4); }
+@keyframes goldPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255,215,0,0.2); }
+  50% { box-shadow: 0 0 20px 2px rgba(255,215,0,0.3); }
+}
+
+/* Rank Display */
+.rank-container {
+  text-align: center;
+  margin: 20px 0;
 }
 
 .rank-number {
-  font-family: 'Syne', sans-serif;
-  font-size: 68px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 72px;
   font-weight: 800;
+  line-height: 1;
+}
+
+.rank-founder-text {
+  background: linear-gradient(135deg, var(--gold), #FFA500);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.rank-rider-text {
+  background: linear-gradient(135deg, var(--emerald), #00CC82);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.early-access {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 4px 12px;
+  background: rgba(255,215,0,0.1);
+  border-radius: 60px;
+  font-size: 10px;
+  color: var(--gold);
+}
+
+/* Timer */
+.timer-section {
+  margin: 24px 0;
   text-align: center;
-  margin: 16px 0;
 }
 
-.rank-founder {
-  background: linear-gradient(135deg, var(--gold-dark), var(--gold));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-.rank-rider {
-  background: linear-gradient(135deg, var(--em-dark), var(--em));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+.timer-label {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
 }
 
 .timer-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 12px;
-  text-align: center;
-  margin: 20px 0;
+}
+
+.timer-cell {
+  background: rgba(255,255,255,0.03);
+  border-radius: 20px;
+  padding: 12px;
 }
 
 .timer-value {
-  font-family: 'Syne', sans-serif;
-  font-size: 38px;
-  font-weight: 800;
+  font-family: 'Space Grotesk', monospace;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.timer-unit {
+  font-size: 10px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.wave-message {
+  margin-top: 12px;
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+
+/* Progress */
+.progress-section {
+  margin: 20px 0;
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  margin-bottom: 8px;
 }
 
 .progress-bar {
   height: 6px;
-  background: rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.08);
   border-radius: 10px;
   overflow: hidden;
-  margin: 12px 0;
 }
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--gold-dark), var(--gold));
+  background: linear-gradient(90deg, var(--gold), #FFA500);
   width: 0%;
-  transition: width 1s ease;
+  transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.toast-message {
+.urgency-text {
+  font-size: 10px;
+  margin-top: 8px;
+  color: var(--emerald);
+}
+
+/* Share & Actions */
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.btn-share {
+  background: rgba(0,255,163,0.08);
+  border: 1px solid rgba(0,255,163,0.2);
+  color: var(--emerald);
+  padding: 14px;
+  border-radius: 60px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-copy {
+  background: rgba(255,215,0,0.08);
+  border: 1px solid rgba(255,215,0,0.2);
+  color: var(--gold);
+  padding: 12px;
+  border-radius: 60px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.logout-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 11px;
+  cursor: pointer;
+  margin-top: 20px;
+  width: 100%;
+  text-align: center;
+}
+
+/* Toast */
+.toast {
   position: fixed;
-  bottom: 24px;
-  left: 16px;
-  right: 16px;
-  background: rgba(0,0,0,0.9);
+  bottom: 30px;
+  left: 20px;
+  right: 20px;
+  background: rgba(0,0,0,0.95);
   backdrop-filter: blur(20px);
   padding: 14px 20px;
   border-radius: 60px;
   text-align: center;
-  z-index: 1000;
   font-size: 13px;
-  animation: slideUp 0.3s ease;
+  z-index: 1000;
+  animation: toastSlide 0.3s ease;
   pointer-events: none;
+  max-width: 400px;
+  margin: 0 auto;
 }
 
-@keyframes slideUp {
-  from { transform: translateY(100px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+@keyframes toastSlide {
+  from {
+    opacity: 0;
+    transform: translateY(100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.back-button {
+/* Back button */
+.back-btn {
   background: none;
   border: none;
-  color: var(--text-dim);
+  color: var(--text-secondary);
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin-bottom: 16px;
+  gap: 8px;
+  margin-bottom: 20px;
   cursor: pointer;
+  font-size: 13px;
 }
 
-.hidden { display: none; }
+/* Responsive Desktop */
+@media (min-width: 768px) {
+  .app-container {
+    padding: 40px;
+  }
+  
+  .screen {
+    max-width: 550px;
+  }
+  
+  .glass-card {
+    padding: 48px 40px;
+  }
+  
+  .rank-number {
+    font-size: 88px;
+  }
+  
+  .timer-value {
+    font-size: 42px;
+  }
+  
+  .otp-digit {
+    width: 65px;
+    height: 70px;
+    font-size: 28px;
+  }
+  
+  .toast {
+    left: auto;
+    right: 30px;
+    bottom: 30px;
+    max-width: 380px;
+  }
+}
+
+/* Hide class */
+.hidden {
+  display: none !important;
+}
 </style>
 </head>
 <body>
 
-<div id="mapCanvas">
-  <!-- Dots dynamiques générés en JS -->
+<div id="dynamicBg">
+  <div class="grid-overlay"></div>
 </div>
 
-<div id="root">
-  <!-- Écran Connexion/Inscription -->
+<div class="app-container">
+  
+  <!-- Écran Auth (Login/Register) -->
   <div id="screenAuth" class="screen active">
-    <div class="logo-container">
-      <div class="logo-icon">⚡</div>
-      <div class="logo-text">THE SPOT</div>
-      <div style="font-size: 9px; letter-spacing: 4px; margin-top: 8px;">PRE-LAUNCH</div>
-    </div>
-
     <div class="glass-card">
-      <div class="tabs">
-        <button class="tab active" id="tabLoginBtn" onclick="switchAuthTab('login')">CONNEXION</button>
-        <button class="tab" id="tabRegBtn" onclick="switchAuthTab('register')">INSCRIPTION</button>
+      <div class="logo-section">
+        <div class="logo-3d">⚡</div>
+        <div class="logo-title">THE SPOT</div>
+        <div class="logo-sub">PRE-LAUNCH · FOUNDERS EDITION</div>
       </div>
-
+      
+      <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchTab('login')">CONNEXION</button>
+        <button class="tab-btn" onclick="switchTab('register')">INSCRIPTION</button>
+      </div>
+      
       <!-- Formulaire Connexion -->
-      <div id="loginForm">
-        <div class="input-group">
-          <label class="input-label">EMAIL</label>
-          <input type="email" id="loginEmail" class="input-field" placeholder="ton@email.com">
+      <div id="loginPanel">
+        <div class="form-group">
+          <label class="form-label">EMAIL</label>
+          <input type="email" id="loginEmail" class="form-input" placeholder="ton@email.com">
         </div>
-        <div class="input-group">
-          <label class="input-label">MOT DE PASSE</label>
+        <div class="form-group">
+          <label class="form-label">MOT DE PASSE</label>
           <div class="input-wrapper">
-            <input type="password" id="loginPassword" class="input-field" placeholder="••••••••">
-            <button class="eye-toggle" onclick="togglePassword('loginPassword', this)">👁</button>
+            <input type="password" id="loginPassword" class="form-input" placeholder="••••••••">
+            <button class="eye-icon" onclick="toggleFieldVisibility('loginPassword', this)">👁</button>
           </div>
         </div>
-        <button class="btn-primary" id="doLoginBtn" onclick="handleLogin()">ENTRER DANS LE SPOT</button>
+        <button class="btn-primary" onclick="handleLogin()">ENTRER DANS LE SPOT</button>
       </div>
-
+      
       <!-- Formulaire Inscription -->
-      <div id="registerForm" class="hidden">
-        <div class="input-group">
-          <label class="input-label">PSEUDO (UNIQUE)</label>
-          <input type="text" id="regUsername" class="input-field" placeholder="TonPseudo" maxlength="20" autocomplete="off">
-          <div id="usernameHint" class="validation-hint"></div>
+      <div id="registerPanel" class="hidden">
+        <div class="form-group">
+          <label class="form-label">PSEUDO (UNIQUE)</label>
+          <input type="text" id="regUsername" class="form-input" placeholder="TonPseudo" maxlength="20">
+          <div id="usernameHint" class="hint-text"></div>
         </div>
-        <div class="input-group">
-          <label class="input-label">EMAIL</label>
-          <input type="email" id="regEmail" class="input-field" placeholder="ton@email.com">
+        <div class="form-group">
+          <label class="form-label">EMAIL</label>
+          <input type="email" id="regEmail" class="form-input" placeholder="ton@email.com">
         </div>
-        <div class="input-group">
-          <label class="input-label">MOT DE PASSE</label>
+        <div class="form-group">
+          <label class="form-label">MOT DE PASSE</label>
           <div class="input-wrapper">
-            <input type="password" id="regPassword" class="input-field" placeholder="Min. 6 caractères">
-            <button class="eye-toggle" onclick="togglePassword('regPassword', this)">👁</button>
+            <input type="password" id="regPassword" class="form-input" placeholder="Min. 6 caractères">
+            <button class="eye-icon" onclick="toggleFieldVisibility('regPassword', this)">👁</button>
           </div>
         </div>
-        <div class="input-group">
-          <label class="input-label">CODE PARRAINAGE (OBLIGATOIRE)</label>
-          <input type="text" id="regReferral" class="input-field" placeholder="CODE_XXXX" style="text-transform: uppercase;">
-          <div id="referralHint" class="validation-hint"></div>
+        <div class="form-group">
+          <label class="form-label">CODE PARRAINAGE (OBLIGATOIRE)</label>
+          <input type="text" id="regReferral" class="form-input" placeholder="CODE_XXXX" style="text-transform: uppercase;">
+          <div id="referralHint" class="hint-text"></div>
         </div>
-        <button class="btn-primary" id="doRegBtn" onclick="handleRegister()">REJOINDRE L'ÉLITE</button>
+        <button class="btn-primary" onclick="handleRegister()">REJOINDRE L'ÉLITE</button>
       </div>
     </div>
   </div>
-
+  
   <!-- Écran OTP -->
   <div id="screenOtp" class="screen">
     <div class="glass-card">
-      <button class="back-button" onclick="goBackToAuth()">← Retour</button>
+      <button class="back-btn" onclick="goBackToAuth()">← Retour</button>
       <div style="text-align: center;">
-        <div style="font-size: 22px; font-weight: 800;">VÉRIFICATION</div>
-        <div style="font-size: 13px; color: var(--text-dim); margin: 12px 0;">Code à 6 chiffres envoyé à</div>
-        <div id="otpEmailTarget" style="font-weight: 600; color: var(--em);"></div>
+        <div style="font-size: 24px; font-weight: 800;">VÉRIFICATION</div>
+        <div style="font-size: 13px; color: var(--text-secondary); margin: 12px 0;">Code envoyé à</div>
+        <div id="otpEmailDisplay" style="color: var(--emerald); font-weight: 600;"></div>
       </div>
-      <div class="otp-container" id="otpContainer"></div>
-      <button class="btn-primary" id="verifyOtpBtn" onclick="verifyOtpCode()">CONFIRMER</button>
-      <button class="btn-outline" style="margin-top: 12px;" onclick="resendOtpCode()">Renvoyer le code</button>
+      <div class="otp-grid" id="otpContainer"></div>
+      <button class="btn-primary" onclick="verifyOtp()">CONFIRMER</button>
+      <button class="btn-secondary" style="margin-top: 12px;" onclick="resendOtp()">Renvoyer le code</button>
     </div>
   </div>
-
-  <!-- Dashboard Attente -->
+  
+  <!-- Écran Dashboard -->
   <div id="screenDashboard" class="screen">
-    <div class="dash-header">
-      <div>
-        <div id="dashboardUsername" style="font-weight: 700;"></div>
-        <div style="font-size: 10px; color: var(--text-dim);">RIDER</div>
-      </div>
-      <div class="logo-icon" style="width: 44px; height: 44px; font-size: 24px;">⚡</div>
-    </div>
-
     <div class="glass-card">
-      <div id="badgeContainer" style="display: flex; justify-content: center; margin-bottom: 20px;"></div>
-
-      <div class="rank-number" id="rankDisplay">N° --</div>
-      <div id="earlyAccessMsg" class="hidden" style="text-align: center; font-size: 11px; color: var(--gold); margin-top: -8px; margin-bottom: 16px;">🔓 ACCÈS ANTICIPÉ DÉBLOQUÉ</div>
-
-      <!-- Timer -->
-      <div style="text-align: center; margin: 16px 0 8px;">
-        <div style="font-size: 11px; letter-spacing: 2px;">LANCEMENT DANS</div>
-        <div class="timer-grid" id="timerGrid">
-          <div><div class="timer-value" id="daysVal">00</div><div>Jours</div></div>
-          <div><div class="timer-value" id="hoursVal">00</div><div>Heures</div></div>
-          <div><div class="timer-value" id="minutesVal">00</div><div>Minutes</div></div>
-          <div><div class="timer-value" id="secondsVal">00</div><div>Secondes</div></div>
+      <div class="dash-header">
+        <div class="user-info">
+          <h3 id="dashUsername">---</h3>
+          <p>RIDER</p>
         </div>
-        <div id="waveMessage" style="font-size: 10px; color: var(--text-dim);"></div>
+        <div class="logo-3d" style="width: 50px; height: 50px; font-size: 24px;">⚡</div>
       </div>
-
-      <!-- Progress bar Founder -->
-      <div style="margin: 20px 0 12px;">
-        <div style="display: flex; justify-content: space-between; font-size: 12px;">
-          <span>PLACES FOUNDERS</span>
-          <span id="founderCounter">0 / 50</span>
-        </div>
-        <div class="progress-bar"><div class="progress-fill" id="founderProgressFill"></div></div>
-        <div id="urgencyMsg" style="font-size: 10px; color: var(--em);"></div>
-      </div>
-
-      <button class="btn-primary" id="shareRankBtn" onclick="shareRank()" style="background: linear-gradient(135deg, #2A2A2A, #1A1A1A); color: var(--em); margin-top: 8px;">📢 PARTAGE TON RANG</button>
       
-      <div id="referralCodeBlock" class="hidden" style="margin-top: 12px;">
-        <button class="btn-outline" onclick="copyReferralCode()" style="width: 100%;">💎 COPIER MON CODE PARRAIN</button>
+      <div id="badgeContainer" style="display: flex; justify-content: center; margin-bottom: 20px;"></div>
+      
+      <div class="rank-container">
+        <div class="rank-number" id="rankNumber">N° --</div>
+        <div id="earlyAccessBadge" class="early-access hidden">🔓 ACCÈS ANTICIPÉ DÉBLOQUÉ</div>
       </div>
-
-      <button onclick="logout()" style="background: none; border: none; color: var(--text-dim); font-size: 11px; margin-top: 20px; width: 100%; cursor: pointer;">Se déconnecter</button>
+      
+      <div class="timer-section">
+        <div class="timer-label">LANCEMENT DANS</div>
+        <div class="timer-grid">
+          <div class="timer-cell"><div class="timer-value" id="days">00</div><div class="timer-unit">JOURS</div></div>
+          <div class="timer-cell"><div class="timer-value" id="hours">00</div><div class="timer-unit">HEURES</div></div>
+          <div class="timer-cell"><div class="timer-value" id="minutes">00</div><div class="timer-unit">MIN</div></div>
+          <div class="timer-cell"><div class="timer-value" id="seconds">00</div><div class="timer-unit">SEC</div></div>
+        </div>
+        <div class="wave-message" id="waveMessage"></div>
+      </div>
+      
+      <div class="progress-section">
+        <div class="progress-header">
+          <span>PLACES FOUNDERS</span>
+          <span id="founderCount">0 / 50</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="founderProgress"></div>
+        </div>
+        <div class="urgency-text" id="urgencyMessage"></div>
+      </div>
+      
+      <div class="action-buttons">
+        <button class="btn-share" onclick="shareRank()">📢 PARTAGE TON RANG</button>
+        <div id="referralCodePanel" class="hidden">
+          <button class="btn-copy" onclick="copyReferralCode()">💎 COPIER MON CODE PARRAIN</button>
+        </div>
+      </div>
+      
+      <button class="logout-btn" onclick="handleLogout()">Se déconnecter</button>
     </div>
   </div>
+  
 </div>
 
 <script>
-// INIT SUPABASE
+// ============================================================
+// SUPABASE INIT
+// ============================================================
 const supabaseUrl = 'https://pjxxubimwzvvfkvjxfwl.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBqeHh1Ymltd3p2dmZrdmp4ZndsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMjAwNTMsImV4cCI6MjA5MDg5NjA1M30.l9LLC5AcTX9TQzEQYzCDvqcAO1N9jh_r4YTBRQ13sN0';
 const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
+// ============================================================
+// GLOBAL STATE
+// ============================================================
 let currentUser = null;
-let currentRankData = null;
+let currentProfile = null;
+let rankData = null;
 let timerInterval = null;
 let pendingReferrerId = null;
-let currentOtpEmail = '';
+let pendingEmail = '';
 
-// ─────────────────────────────────────────
-// 1. Gestion UI / Navigation
-// ─────────────────────────────────────────
+// ============================================================
+// UI HELPERS
+// ============================================================
 function showScreen(screenId) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(screenId).classList.add('active');
 }
 
-function switchAuthTab(tab) {
+function switchTab(tab) {
+  const loginPanel = document.getElementById('loginPanel');
+  const registerPanel = document.getElementById('registerPanel');
+  const loginBtn = document.querySelector('.tab-bar button:first-child');
+  const regBtn = document.querySelector('.tab-bar button:last-child');
+  
   if (tab === 'login') {
-    document.getElementById('loginForm').classList.remove('hidden');
-    document.getElementById('registerForm').classList.add('hidden');
-    document.getElementById('tabLoginBtn').classList.add('active');
-    document.getElementById('tabRegBtn').classList.remove('active');
+    loginPanel.classList.remove('hidden');
+    registerPanel.classList.add('hidden');
+    loginBtn.classList.add('active');
+    regBtn.classList.remove('active');
   } else {
-    document.getElementById('loginForm').classList.add('hidden');
-    document.getElementById('registerForm').classList.remove('hidden');
-    document.getElementById('tabRegBtn').classList.add('active');
-    document.getElementById('tabLoginBtn').classList.remove('active');
+    loginPanel.classList.add('hidden');
+    registerPanel.classList.remove('hidden');
+    regBtn.classList.add('active');
+    loginBtn.classList.remove('active');
   }
 }
 
@@ -600,120 +815,157 @@ function goBackToAuth() {
   showScreen('screenAuth');
 }
 
-function toast(message, isError = false) {
-  const toastDiv = document.createElement('div');
-  toastDiv.className = 'toast-message';
-  toastDiv.style.background = isError ? 'rgba(255,68,68,0.9)' : 'rgba(0,0,0,0.9)';
-  toastDiv.innerText = message;
-  document.body.appendChild(toastDiv);
-  setTimeout(() => toastDiv.remove(), 2800);
-}
-
-function togglePassword(fieldId, btn) {
+function toggleFieldVisibility(fieldId, btn) {
   const input = document.getElementById(fieldId);
   input.type = input.type === 'password' ? 'text' : 'password';
-  btn.innerText = input.type === 'password' ? '👁' : '🙈';
+  btn.textContent = input.type === 'password' ? '👁' : '🙈';
 }
 
-// ─────────────────────────────────────────
-// 2. Vérification Pseudo en temps réel (table profiles)
-// ─────────────────────────────────────────
-let usernameCheckTimeout = null;
+function showToast(message, isError = false) {
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = message;
+  toast.style.background = isError ? 'rgba(255,68,68,0.95)' : 'rgba(0,0,0,0.95)';
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 2800);
+}
+
+// ============================================================
+// PSEUDO CHECK (REAL-TIME) - table profiles
+// ============================================================
+let usernameTimeout = null;
 document.getElementById('regUsername')?.addEventListener('input', async (e) => {
   const username = e.target.value.trim();
   const hint = document.getElementById('usernameHint');
+  const input = e.target;
+  
   if (username.length < 3) {
     hint.innerHTML = '⚠️ Minimum 3 caractères';
-    hint.className = 'validation-hint error';
+    hint.className = 'hint-text error';
     return;
   }
-  clearTimeout(usernameCheckTimeout);
-  usernameCheckTimeout = setTimeout(async () => {
-    const { data, error } = await supabase.from('profiles').select('username').eq('username', username).maybeSingle();
+  
+  clearTimeout(usernameTimeout);
+  usernameTimeout = setTimeout(async () => {
+    const { data } = await supabase
+      .from('profiles')
+      .select('username')
+      .eq('username', username)
+      .maybeSingle();
+    
     if (data) {
-      hint.innerHTML = '✖ Pseudo déjà pris';
-      hint.className = 'validation-hint error';
-      document.getElementById('regUsername').classList.add('error');
+      hint.innerHTML = '✖ Ce pseudo est déjà pris';
+      hint.className = 'hint-text error';
+      input.classList.add('error');
+      input.classList.remove('valid');
     } else {
-      hint.innerHTML = '✓ Disponible';
-      hint.className = 'validation-hint valid';
-      document.getElementById('regUsername').classList.add('valid');
+      hint.innerHTML = '✓ Pseudo disponible';
+      hint.className = 'hint-text success';
+      input.classList.add('valid');
+      input.classList.remove('error');
     }
   }, 500);
 });
 
-// ─────────────────────────────────────────
-// 3. Vérification Code Parrainage (table referrals)
-// ─────────────────────────────────────────
+// ============================================================
+// REFERRAL CHECK (REAL-TIME) - table referrals
+// ============================================================
+let referralTimeout = null;
 document.getElementById('regReferral')?.addEventListener('input', async (e) => {
   const code = e.target.value.trim().toUpperCase();
-  const hintDiv = document.getElementById('referralHint');
+  const hint = document.getElementById('referralHint');
+  const input = e.target;
+  
   if (!code) {
-    hintDiv.innerHTML = '';
+    hint.innerHTML = '';
     pendingReferrerId = null;
     return;
   }
-  const { data, error } = await supabase.from('referrals').select('owner_id').eq('code', code).maybeSingle();
-  if (data) {
-    hintDiv.innerHTML = '✓ Code valide';
-    hintDiv.className = 'validation-hint valid';
-    pendingReferrerId = data.owner_id;
-  } else {
-    hintDiv.innerHTML = '✖ Code inexistant';
-    hintDiv.className = 'validation-hint error';
-    pendingReferrerId = null;
-  }
+  
+  clearTimeout(referralTimeout);
+  referralTimeout = setTimeout(async () => {
+    const { data } = await supabase
+      .from('referrals')
+      .select('owner_id, code')
+      .eq('code', code)
+      .maybeSingle();
+    
+    if (data) {
+      hint.innerHTML = '✓ Code valide !';
+      hint.className = 'hint-text success';
+      input.classList.add('valid');
+      input.classList.remove('error');
+      pendingReferrerId = data.owner_id;
+    } else {
+      hint.innerHTML = '✖ Code inexistant';
+      hint.className = 'hint-text error';
+      input.classList.add('error');
+      input.classList.remove('valid');
+      pendingReferrerId = null;
+    }
+  }, 500);
 });
 
-// ─────────────────────────────────────────
-// 4. Inscription avec OTP
-// ─────────────────────────────────────────
+// ============================================================
+// REGISTER
+// ============================================================
 async function handleRegister() {
+  const username = document.getElementById('regUsername').value.trim();
   const email = document.getElementById('regEmail').value.trim();
   const password = document.getElementById('regPassword').value;
-  const username = document.getElementById('regUsername').value.trim();
   const referralCode = document.getElementById('regReferral').value.trim().toUpperCase();
-
-  if (!email || !password || !username) return toast('Tous les champs obligatoires', true);
-  if (password.length < 6) return toast('Mot de passe trop court', true);
   
-  // Vérification pseudo final
-  const { data: existingUser } = await supabase.from('profiles').select('username').eq('username', username).maybeSingle();
-  if (existingUser) return toast('Pseudo indisponible', true);
-  
-  // Vérification code parrain
-  let referrerId = null;
-  if (referralCode) {
-    const { data: refData } = await supabase.from('referrals').select('owner_id').eq('code', referralCode).maybeSingle();
-    if (!refData) return toast('Code parrainage invalide', true);
-    referrerId = refData.owner_id;
-  } else {
-    return toast('Un code parrainage est requis', true);
+  if (!username || !email || !password) {
+    return showToast('Tous les champs sont requis', true);
+  }
+  if (password.length < 6) {
+    return showToast('Mot de passe : minimum 6 caractères', true);
+  }
+  if (!pendingReferrerId) {
+    return showToast('Code parrainage invalide ou manquant', true);
   }
   
-  // Inscription via Supabase Auth
+  // Vérification finale pseudo
+  const { data: existing } = await supabase
+    .from('profiles')
+    .select('username')
+    .eq('username', username)
+    .maybeSingle();
+  if (existing) {
+    return showToast('Pseudo déjà utilisé', true);
+  }
+  
+  // Inscription
   const { data, error } = await supabase.auth.signUp({
-    email, password,
+    email,
+    password,
     options: { data: { username } }
   });
   
-  if (error) return toast(error.message, true);
-  if (!data.user) return toast("Erreur d'inscription", true);
+  if (error) return showToast(error.message, true);
+  if (!data.user) return showToast("Erreur d'inscription", true);
   
-  // Mettre à jour le profile avec username + referrer
-  await supabase.from('profiles').update({
-    username: username,
-    referred_by: referrerId,
-    referral_code: Math.random().toString(36).substring(2, 8).toUpperCase()
-  }).eq('id', data.user.id);
+  // Mise à jour du profil avec referrer et génération code parrain
+  const referralCodeGen = Math.random().toString(36).substring(2, 8).toUpperCase();
+  await supabase
+    .from('profiles')
+    .update({
+      username: username,
+      referred_by: pendingReferrerId,
+      referral_code: referralCodeGen
+    })
+    .eq('id', data.user.id);
   
-  currentOtpEmail = email;
-  document.getElementById('otpEmailTarget').innerText = email;
+  pendingEmail = email;
+  document.getElementById('otpEmailDisplay').innerText = email;
   showScreen('screenOtp');
   createOtpInputs();
-  toast(`Code envoyé à ${email}`);
+  showToast(`Code OTP envoyé à ${email}`);
 }
 
+// ============================================================
+// OTP
+// ============================================================
 function createOtpInputs() {
   const container = document.getElementById('otpContainer');
   container.innerHTML = '';
@@ -721,10 +973,10 @@ function createOtpInputs() {
     const input = document.createElement('input');
     input.type = 'text';
     input.maxLength = 1;
-    input.classList.add('otp-input');
+    input.classList.add('otp-digit');
     input.addEventListener('input', (e) => {
-      if (e.target.value) {
-        if (i < 5) container.children[i+1].focus();
+      if (e.target.value && i < 5) {
+        container.children[i + 1].focus();
       }
     });
     container.appendChild(input);
@@ -732,189 +984,256 @@ function createOtpInputs() {
   container.children[0]?.focus();
 }
 
-async function verifyOtpCode() {
-  const inputs = document.querySelectorAll('#otpContainer .otp-input');
-  const token = Array.from(inputs).map(i => i.value).join('');
-  if (token.length !== 6) return toast('Code incomplet', true);
+async function verifyOtp() {
+  const inputs = document.querySelectorAll('.otp-digit');
+  const code = Array.from(inputs).map(i => i.value).join('');
+  if (code.length !== 6) return showToast('Code incomplet', true);
   
   const { error } = await supabase.auth.verifyOtp({
-    email: currentOtpEmail,
-    token: token,
+    email: pendingEmail,
+    token: code,
     type: 'signup'
   });
-  if (error) return toast('Code invalide', true);
   
-  toast('Inscription réussie ! Bienvenue.');
-  await loadUserDashboard();
+  if (error) {
+    showToast('Code invalide', true);
+    inputs.forEach(i => i.classList.add('error'));
+    setTimeout(() => inputs.forEach(i => i.classList.remove('error')), 500);
+    return;
+  }
+  
+  showToast('Inscription réussie !');
+  await loadDashboard();
 }
 
-async function resendOtpCode() {
-  await supabase.auth.resend({ type: 'signup', email: currentOtpEmail });
-  toast('Nouveau code envoyé');
+async function resendOtp() {
+  await supabase.auth.resend({ type: 'signup', email: pendingEmail });
+  showToast('Code renvoyé');
 }
 
-// ─────────────────────────────────────────
-// 5. Connexion
-// ─────────────────────────────────────────
+// ============================================================
+// LOGIN
+// ============================================================
 async function handleLogin() {
   const email = document.getElementById('loginEmail').value.trim();
   const password = document.getElementById('loginPassword').value;
-  if (!email || !password) return toast('Email et mot de passe requis', true);
-  const { error, data } = await supabase.auth.signInWithPassword({ email, password });
-  if (error) return toast('Échec connexion', true);
-  await loadUserDashboard();
+  
+  if (!email || !password) return showToast('Email et mot de passe requis', true);
+  
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) return showToast('Identifiants incorrects', true);
+  
+  await loadDashboard();
 }
 
-// ─────────────────────────────────────────
-// 6. Dashboard & RPC get_user_launch_status
-// ─────────────────────────────────────────
-async function loadUserDashboard() {
+// ============================================================
+// DASHBOARD - RPC get_user_launch_status
+// ============================================================
+async function loadDashboard() {
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return showScreen('screenAuth');
+  if (!user) {
+    showScreen('screenAuth');
+    return;
+  }
+  
   currentUser = user;
   
-  // Récupération du profil
-  const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
-  if (!profile) return;
+  // Récupération profil
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', user.id)
+    .single();
   
-  document.getElementById('dashboardUsername').innerText = profile.username || user.email;
+  if (profile) {
+    currentProfile = profile;
+    document.getElementById('dashUsername').innerText = profile.username || user.email?.split('@')[0];
+  }
   
-  // Appel de la fonction RPC pour obtenir rank et launch_date
-  const { data: status, error: rpcErr } = await supabase.rpc('get_user_launch_status', { p_user_id: user.id });
-  if (rpcErr) console.error(rpcErr);
+  // Appel RPC pour rank et launch_date
+  const { data: status, error: rpcError } = await supabase
+    .rpc('get_user_launch_status', { p_user_id: user.id });
   
-  let rank = status?.rank || 999;
-  let launchDateISO = status?.launch_date;
-  let isFounder = (rank <= 50);
+  if (rpcError) console.error('RPC Error:', rpcError);
   
-  if (isFounder && !profile.is_founder) {
-    // Mettre à jour si Founder
-    await supabase.from('profiles').update({ is_founder: true, gems: 100 }).eq('id', user.id);
-    profile.is_founder = true;
+  const rank = status?.rank || 999;
+  const launchDate = status?.launch_date ? new Date(status.launch_date) : null;
+  const isFounder = rank <= 50;
+  
+  // Mise à jour du statut founder si nécessaire
+  if (isFounder && !profile?.is_founder) {
+    await supabase.from('profiles').update({ is_founder: true }).eq('id', user.id);
   }
   
   // Affichage badge
-  const badgeDiv = document.getElementById('badgeContainer');
-  if (rank <= 50) {
-    badgeDiv.innerHTML = `<div class="rider-badge badge-founder"><span>⚡</span> FOUNDER ELITE</div>`;
-    document.getElementById('rankDisplay').className = 'rank-number rank-founder';
-    document.getElementById('earlyAccessMsg').classList.remove('hidden');
-    if (profile.referral_code) document.getElementById('referralCodeBlock').classList.remove('hidden');
-  } else {
-    badgeDiv.innerHTML = `<div class="rider-badge badge-rider"><span>🏍️</span> RIDER</div>`;
-    document.getElementById('rankDisplay').className = 'rank-number rank-rider';
-    document.getElementById('earlyAccessMsg').classList.add('hidden');
-  }
-  document.getElementById('rankDisplay').innerHTML = `N° ${rank}`;
+  const badgeContainer = document.getElementById('badgeContainer');
+  const rankElement = document.getElementById('rankNumber');
+  const earlyBadge = document.getElementById('earlyAccessBadge');
+  const referralPanel = document.getElementById('referralCodePanel');
   
-  // Gestion du Timer avec launch_date venant de la BDD
-  if (launchDateISO) {
-    const targetDate = new Date(launchDateISO);
-    startCountdown(targetDate, rank);
+  if (isFounder) {
+    badgeContainer.innerHTML = '<div class="badge badge-founder"><span>⚡</span> FOUNDER ELITE</div>';
+    rankElement.className = 'rank-number rank-founder-text';
+    earlyBadge.classList.remove('hidden');
+    if (profile?.referral_code) referralPanel.classList.remove('hidden');
   } else {
-    // fallback
-    let baseDate = new Date('2025-06-01T12:00:00Z');
-    if (rank > 50) baseDate.setDate(baseDate.getDate() + 7);
-    startCountdown(baseDate, rank);
+    badgeContainer.innerHTML = '<div class="badge badge-rider"><span>🏍️</span> RIDER</div>';
+    rankElement.className = 'rank-number rank-rider-text';
+    earlyBadge.classList.add('hidden');
   }
   
-  // Wave message
-  const waveMsgDiv = document.getElementById('waveMessage');
-  if (rank > 50) waveMsgDiv.innerText = '🌊 Vague 2 : +7 jours d\'attente';
-  else waveMsgDiv.innerText = '✨ Vague 1 : Accès prioritaire Founder ✨';
+  rankElement.innerHTML = `N° ${rank}`;
   
-  // Charger le nombre de founders
-  await updateFounderProgress();
+  // Timer avec launch_date venant de la BDD
+  if (launchDate) {
+    startTimer(launchDate);
+  } else {
+    // Fallback sécurisé
+    let fallbackDate = new Date('2025-06-01T12:00:00Z');
+    if (rank > 50) fallbackDate.setDate(fallbackDate.getDate() + 7);
+    startTimer(fallbackDate);
+  }
+  
+  // Message vague
+  const waveMsg = document.getElementById('waveMessage');
+  if (rank > 50) {
+    waveMsg.innerHTML = '🌊 VAGUE 2 · Accès différé +7 jours 🌊';
+    waveMsg.style.color = '#FFA500';
+  } else {
+    waveMsg.innerHTML = '✨ VAGUE 1 · Accès Founder Prioritaire ✨';
+    waveMsg.style.color = 'var(--emerald)';
+  }
+  
+  // Charger le compteur de founders
+  await loadFounderCount();
   
   showScreen('screenDashboard');
 }
 
-function startCountdown(targetDate, rank) {
+// ============================================================
+// TIMER
+// ============================================================
+function startTimer(targetDate) {
   if (timerInterval) clearInterval(timerInterval);
-  function updateTimer() {
+  
+  function update() {
     const now = new Date().getTime();
     const diff = targetDate.getTime() - now;
+    
     if (diff <= 0) {
       clearInterval(timerInterval);
-      document.getElementById('daysVal').innerText = '00';
-      document.getElementById('hoursVal').innerText = '00';
-      document.getElementById('minutesVal').innerText = '00';
-      document.getElementById('secondsVal').innerText = '00';
+      document.getElementById('days').innerText = '00';
+      document.getElementById('hours').innerText = '00';
+      document.getElementById('minutes').innerText = '00';
+      document.getElementById('seconds').innerText = '00';
       return;
     }
+    
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     const hours = Math.floor((diff % (86400000)) / 3600000);
-    const mins = Math.floor((diff % 3600000) / 60000);
-    const secs = Math.floor((diff % 60000) / 1000);
-    document.getElementById('daysVal').innerText = days.toString().padStart(2,'0');
-    document.getElementById('hoursVal').innerText = hours.toString().padStart(2,'0');
-    document.getElementById('minutesVal').innerText = mins.toString().padStart(2,'0');
-    document.getElementById('secondsVal').innerText = secs.toString().padStart(2,'0');
+    const minutes = Math.floor((diff % 3600000) / 60000);
+    const seconds = Math.floor((diff % 60000) / 1000);
+    
+    document.getElementById('days').innerText = days.toString().padStart(2, '0');
+    document.getElementById('hours').innerText = hours.toString().padStart(2, '0');
+    document.getElementById('minutes').innerText = minutes.toString().padStart(2, '0');
+    document.getElementById('seconds').innerText = seconds.toString().padStart(2, '0');
   }
-  updateTimer();
-  timerInterval = setInterval(updateTimer, 1000);
+  
+  update();
+  timerInterval = setInterval(update, 1000);
 }
 
-async function updateFounderProgress() {
-  const { count } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('is_founder', true);
+// ============================================================
+// FOUNDER COUNT - table profiles
+// ============================================================
+async function loadFounderCount() {
+  const { count } = await supabase
+    .from('profiles')
+    .select('*', { count: 'exact', head: true })
+    .eq('is_founder', true);
+  
   const founderCount = count || 0;
   const percent = Math.min(100, (founderCount / 50) * 100);
-  document.getElementById('founderCounter').innerText = `${founderCount} / 50`;
-  document.getElementById('founderProgressFill').style.width = `${percent}%`;
-  const left = 50 - founderCount;
-  const urgencyDiv = document.getElementById('urgencyMsg');
-  if (left <= 10) urgencyDiv.innerHTML = `⚠️ ULTIME URGENCE : Plus que ${left} places Founder ! ⚠️`;
-  else urgencyDiv.innerHTML = `${left} places restantes avant la Vague 2`;
+  const left = Math.max(0, 50 - founderCount);
+  
+  document.getElementById('founderCount').innerText = `${founderCount} / 50`;
+  document.getElementById('founderProgress').style.width = `${percent}%`;
+  
+  const urgency = document.getElementById('urgencyMessage');
+  if (left <= 10) {
+    urgency.innerHTML = `⚠️ URGENCE · Plus que ${left} place${left > 1 ? 's' : ''} Founder ! ⚠️`;
+    urgency.style.color = '#FF4444';
+  } else {
+    urgency.innerHTML = `${left} place${left > 1 ? 's' : ''} restante${left > 1 ? 's' : ''} avant Vague 2`;
+    urgency.style.color = 'var(--emerald)';
+  }
 }
 
+// ============================================================
+// SHARE & COPY
+// ============================================================
 async function shareRank() {
-  const rankText = document.getElementById('rankDisplay').innerText;
+  const rankText = document.getElementById('rankNumber').innerText;
   const isFounder = document.querySelector('#badgeContainer .badge-founder') !== null;
+  
   let message = `Je suis le ${rankText} sur The Spot. On se voit sur le terrain. 🤙`;
-  if (isFounder) message = `🔥 Je suis le ${rankText} — FOUNDER ELITE sur The Spot. Accès anticipé débloqué ! 🔥`;
-  if (navigator.share) await navigator.share({ text: message });
-  else {
+  if (isFounder) {
+    message = `🔥 Je suis le ${rankText} — FOUNDER ELITE sur The Spot. Accès anticipé débloqué ! 🔥`;
+  }
+  
+  if (navigator.share) {
+    await navigator.share({ title: 'THE SPOT', text: message });
+  } else {
     await navigator.clipboard.writeText(message);
-    toast('Message copié !');
+    showToast('Message copié dans le presse-papier !');
   }
 }
 
 async function copyReferralCode() {
-  const { data: profile } = await supabase.from('profiles').select('referral_code').eq('id', currentUser.id).single();
-  if (profile?.referral_code) {
-    await navigator.clipboard.writeText(profile.referral_code);
-    toast('Code copié !');
+  if (currentProfile?.referral_code) {
+    await navigator.clipboard.writeText(currentProfile.referral_code);
+    showToast('Code parrain copié !');
   }
 }
 
-async function logout() {
+// ============================================================
+// LOGOUT
+// ============================================================
+async function handleLogout() {
   if (timerInterval) clearInterval(timerInterval);
   await supabase.auth.signOut();
+  currentUser = null;
+  currentProfile = null;
   showScreen('screenAuth');
   document.getElementById('loginEmail').value = '';
   document.getElementById('loginPassword').value = '';
+  showToast('Déconnecté');
 }
 
-// ─────────────────────────────────────────
-// 7. Création des points animés
-// ─────────────────────────────────────────
-function initMapDots() {
-  const map = document.getElementById('mapCanvas');
-  for (let i = 0; i < 20; i++) {
-    const dot = document.createElement('div');
-    dot.classList.add('map-dot');
-    dot.style.left = Math.random() * 100 + '%';
-    dot.style.top = Math.random() * 100 + '%';
-    dot.style.animationDelay = Math.random() * 5 + 's';
-    map.appendChild(dot);
+// ============================================================
+// PARTICLES ANIMATION
+// ============================================================
+function createParticles() {
+  for (let i = 0; i < 30; i++) {
+    const particle = document.createElement('div');
+    particle.className = 'particle';
+    particle.style.left = Math.random() * 100 + '%';
+    particle.style.animationDelay = Math.random() * 8 + 's';
+    particle.style.animationDuration = 6 + Math.random() * 6 + 's';
+    document.body.appendChild(particle);
   }
 }
-initMapDots();
+createParticles();
 
-// Vérifier session au chargement
+// ============================================================
+// SESSION CHECK
+// ============================================================
 (async () => {
   const { data: { session } } = await supabase.auth.getSession();
-  if (session) await loadUserDashboard();
+  if (session) {
+    await loadDashboard();
+  }
 })();
 </script>
 </body>
